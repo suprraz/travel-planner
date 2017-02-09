@@ -2,7 +2,20 @@
 
 var SwaggerExpress = require('swagger-express-mw');
 var app = require('express')();
+var mongoose = require('mongoose');
+var cookieParser = require('cookie-parser');
+var authenticate = require('./middleware/authenticate');
+var authorize = require('./middleware/authorize');
+
+var dbOptions = { promiseLibrary: require('bluebird') };
+
+global.db = (global.db ? global.db : mongoose.createConnection('mongodb://localhost/travel_planner', dbOptions));
+
 module.exports = app; // for testing
+app.use(cookieParser());
+
+app.use(authenticate);
+authorize(app);
 
 var config = {
   appRoot: __dirname // required config

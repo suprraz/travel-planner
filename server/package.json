@@ -9,8 +9,11 @@
   "main": "app.js",
   "dependencies": {
     "an-array-of-english-words": "^1.2.0",
+    "bluebird": "^3.4.7",
+    "cookie-parser": "^1.4.3",
     "crypto": "0.0.3",
     "express": "^4.12.3",
+    "mongoose": "^4.8.1",
     "require.js": "^1.0.0",
     "swagger-express-mw": "^0.1.0"
   },

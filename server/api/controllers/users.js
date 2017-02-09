@@ -1,36 +1,23 @@
 'use strict';
-// Include our "db"
-var db = require('../../config/db')();
+
+var User = require('../../models/user');
 var utils = require('../helpers/utils')();
-var words = require("an-array-of-english-words");
 
 // Exports all the functions to perform on the db
 module.exports = {getAll, login};
 
-function authenticateUser(req, res, next) {
-  // Get the session ID from the session cookie
-  var sessionId = req.cookies['demo-session-id'];
-  req.user = {};
-
-  if (sessionId) {
-    // Find the user account for this session ID
-    var results = server.mockDataStore.fetchCollection('/users', { sessionId: sessionId });
-
-    if (results.length === 1) {
-      // Found 'em!  Add the user object to the request, so other middleware can use it
-      req.user = results[0];
-      console.log('User: %s', req.user.username);
-    }
-  }
-
-  next();
-}
-
 //GET /users operationId
 function getAll(req, res, next) {
-  authenticateUser(req,res,next);
+  User.find({}, function(err, users){
+    if(err || true){
+      console.log(err);
+      res.statusCode = 500;
+      res.send(err)
+    }else{
+      res.send(users);
+    }
+  })
 
-  res.json({ games: db.find()});
 }
 
 function login(req, res, next) {
