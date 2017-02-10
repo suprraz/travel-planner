@@ -87,7 +87,7 @@ module.exports = {
     app.delete('/users/{username}', yourselfOrManagerOnly);
 
     // Users/managers can only log themselves out
-    app.post('/users/{username}/logout', yourselfOrManagerOnly);
+    app.post('/users/{username}/logout', yourselfOnly);
 
 
     // Only admins are allowed to get the full list of users

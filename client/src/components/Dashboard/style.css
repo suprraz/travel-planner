@@ -56,3 +56,14 @@ button:active
     -webkit-animation: none;
     animation: none;
 }
+
+tr {
+    border: 1px solid #C75056;
+}
+tr td {
+    border-bottom: 1px solid #C75056;
+}
+
+.logout {
+    text-align: right;
+}

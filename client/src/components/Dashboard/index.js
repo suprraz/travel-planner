@@ -104,6 +104,51 @@ export default class Login extends Component {
     });
   }
 
+  deleteTrip(trip) {
+    debugger
+    fetch(serverHost + '/trips', {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      }
+    })
+      .then(ApiUtils.checkStatus)
+      .then((response) => response.json())
+      .then((responseJson) => {
+        if(responseJson.errmsg) {
+          this.setState( {alert: responseJson.errmsg});
+        } else {
+          this.getTrips()
+        }
+      })
+      .catch((error) => {
+        if(error.message === 'Unauthorized') {
+          this.props.router.push('/');
+        }
+      });
+  }
+
+  logout() {
+    fetch(serverHost + '/logout', {
+      method: 'GET',
+      credentials: 'include',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      }
+    })
+      .then(ApiUtils.checkStatus)
+      .then((response) => response.json())
+      .then((responseJson) => {
+        this.props.router.push('/');
+      })
+      .catch((error) => {
+        this.props.router.push('/');
+      });
+  }
+
   clearInputs() {
     this.refs.destination.value = '';
     this.refs.startDate.value = '';
@@ -127,6 +172,8 @@ export default class Login extends Component {
           <td>{trip.startDate}</td>
           <td>{trip.endDate}</td>
           <td>{trip.comment}</td>
+          <td><a href="#" onClick={() => this.saveTrip(trip)}>save</a></td>
+          <td><a href="#" onClick={() => this.deleteTrip(trip)}>delete</a></td>
         </tr>)
       }
       trips = <table>
@@ -159,6 +206,10 @@ export default class Login extends Component {
     return (
       <div className="page">
         <div className="container">
+          <div className="logout" >
+            <a href="#" onClick={() => this.logout()}>Log out</a>
+          </div>
+
           <h1>Travel Planner</h1>
           <h3 className="page_title">Trip Dashboard</h3>
           <img className="logo_small" src={require('./images/suitcase.png')} alt="suitcase"/>

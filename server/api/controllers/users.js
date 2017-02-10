@@ -4,7 +4,7 @@ var User = require('../../models/user');
 var utils = require('../helpers/utils')();
 
 // Exports all the functions to perform on the db
-module.exports = {getAll, save, getOne, login};
+module.exports = {getAll, save, getOne, login, logout};
 
 //GET /users operationId
 function getAll(req, res, next) {
@@ -94,4 +94,9 @@ function login(req, res, next) {
       });
     }
   });
+}
+function logout(req, res, next) {
+  req.session.destroy();
+  res.statusCode = 204;
+  res.json({success: true});
 }
