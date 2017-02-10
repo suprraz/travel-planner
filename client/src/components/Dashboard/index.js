@@ -167,7 +167,7 @@ export default class Login extends Component {
       let rows = []
       for(var i = 0; i < this.state.trips.length; i++) {
         const trip = this.state.trips[i];
-        rows.push(<tr>
+        rows.push(<tr key={trip._id}>
           <td>{trip.destination}</td>
           <td>{trip.startDate}</td>
           <td>{trip.endDate}</td>
@@ -177,7 +177,9 @@ export default class Login extends Component {
         </tr>)
       }
       trips = <table>
+        <tbody>
           {rows}
+        </tbody>
       </table>
 
     }

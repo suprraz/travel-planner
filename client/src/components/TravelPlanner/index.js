@@ -5,13 +5,6 @@ import 'whatwg-fetch'
 import './style.css';
 
 export default class TravelPlanner extends Component {
-  constructor(props) {
-    super(props);
-  }
-
-  componentDidMount() {
-  }
-
   login() {
     this.props.router.push('/login');
   }

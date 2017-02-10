@@ -50,9 +50,9 @@ function save(req, res, next) {
 
 //GET /trips operationId
 function getOne(req, res, next) {
-  var tripBeingEdited = req.swagger.params.tripname.value;
+  var tripBeingEdited = req.swagger.params.tripId.value;
 
-  Trip.findOne({tripname: tripBeingEdited}, function(err, trip){
+  Trip.findOne({_id: tripBeingEdited}, function(err, trip){
     if(err){
       console.log(err);
       res.statusCode = 500;

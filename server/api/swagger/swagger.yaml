@@ -97,6 +97,14 @@ parameters:
     schema:
       $ref: "#/definitions/user"
     description: The user data for create/update operations
+    
+  tripId: &tripId
+    name: tripId
+    in: path
+    required: true
+    type: string
+    description: This is the {tripId} path parameter
+
 
 
 paths:
@@ -272,3 +280,20 @@ paths:
               description: The Server returns the URL of the new trip
         400:
           description: Bad JSON formatting in the request
+          
+  /trips/{tripId}:
+    x-swagger-router-controller: trips
+    get:
+      operationId: getOneTrip
+      summary: Retrieves a trip
+      description: >
+        users can only retrieve their own account, not other users'. Except for the "admin" user, who can retrieve anyone.
+      parameters:
+        - $ref: "#/parameters/tripId"
+      responses:
+        200:
+          description: Returns the user's data
+        401:
+          description: You tried to retrieve someone else's account, and you're not the "admin" user.
+        404:
+          description: The {username} was not found
