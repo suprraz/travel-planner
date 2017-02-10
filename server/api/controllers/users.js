@@ -30,7 +30,8 @@ function save(req, res, next) {
   var user = new User({
     name: name,
     username: username,
-    password: password
+    password: password,
+    sessionId: 'random_' + Math.random()
   });
 
   user.save(function (err) {
@@ -66,26 +67,29 @@ function getOne(req, res, next) {
 }
 
 function login(req, res, next) {
-  var username = req.swagger.params.body.username;
-  var password = req.swagger.params.body.password;
+  var username = req.swagger.params.body.value.username;
+  var password = req.swagger.params.body.value.password;
 
-  var user = server.mockDataStore.fetchResource('/users/' + username);
-  if (!user || user.password !== password) {
-    // Login failed
-    res.status(401).send('Invalid username or password');
-  }
-  else {
-    // Login succeeded, so update the user's lastLoginDate
-    user.lastLoginDate = new Date();
+  User.findOne({username: username}, function(err, user){
+    if (!user || user.password !== password) {
+      // Login failed
+      res.status(401).send('Invalid username or password');
+    }
+    else {
+      user.sessionId = 'random_' + Math.random();
 
-    // Set a session cookie that expires waaaaaay in the future
-    user.sessionId = 'random_' + Math.random();
-    res.set('Set-Cookie', 'demo-session-id=' + user.sessionId + '; Expires=Sat, 31-Dec-2050 00:00:00 GMT; Path=/');
+      user.save(function (err) {
+        if(err) {
+          console.error('ERROR!');
+          res.json(err);
+        } else {
+          res.set('Set-Cookie', 'demo-session-id=' + user.sessionId + '; Expires=Sat, 31-Dec-2050 00:00:00 GMT; Path=/');
+          res.json(utils.obfuscate(user.toJSON()));
+        }
+      });
 
-    // Save the user's data
-    server.mockDataStore.overwriteResource('/users/' + username, user);
+    }
+  });
 
-    // Return the user
-    res.json(user);
-  }
+
 }

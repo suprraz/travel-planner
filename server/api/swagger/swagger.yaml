@@ -174,9 +174,10 @@ paths:
           description: The {username} was not found
 
 
-  /users/login:
+  /login:
     x-swagger-router-controller: users
     post:
+      operationId: login
       summary: Logs in
       description: |
         Try logging in with username "jdoe" and password "jdoe".

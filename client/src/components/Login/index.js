@@ -6,7 +6,7 @@ import './style.css';
 
 const serverHost = 'http://'+ window.location.hostname +':10010';
 
-export default class SignUp extends Component {
+export default class Login extends Component {
   constructor(props) {
     super(props);
 
@@ -18,44 +18,21 @@ export default class SignUp extends Component {
   componentDidMount() {
   }
 
-  newGame() {
-    return fetch(serverHost + '/game', {
-      method: 'POST',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        // firstParam: 'yourValue',
-        // secondParam: 'yourOtherValue',
-      })
-      })
-      .then((response) => response.json())
-      .then((responseJson) => {
-        this.setState({game: responseJson.game});
-        return this.state;
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-  }
-
-  signUp() {
-    const name = this.refs.name.value;
+  login() {
     const username = this.refs.username.value;
     const password = this.refs.password.value;
 
     if(!username) {
-      this.setState( {alert: 'Please type a username to join.'});
+      this.setState( {alert: 'Please type a username to login.'});
       return;
     }
 
     if(!password) {
-      this.setState( {alert: 'Please type a password to join.'});
+      this.setState( {alert: 'Please type a password to login.'});
       return;
     }
 
-    fetch(serverHost + '/users', {
+    fetch(serverHost + '/login', {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
@@ -116,10 +93,6 @@ export default class SignUp extends Component {
     const contents = <div>
         <div className='alert'>{this.state.alert}</div>
           <h3>
-            <input ref="name" size="20" placeholder="Name" onChange={() => {this.clearAlert()}}></input>
-          </h3>
-
-          <h3>
             <input ref="username" size="20" placeholder="username" onChange={() => {this.clearAlert()}}></input>
           </h3>
 
@@ -127,7 +100,7 @@ export default class SignUp extends Component {
             <input type="password" ref="password" size="20" placeholder="password" onChange={() => {this.clearAlert()}}></input>
           </h3>
 
-        <button onClick={() => this.signUp()}>Join</button>
+        <button onClick={() => this.login()}>Log In</button>
       </div>
 
 

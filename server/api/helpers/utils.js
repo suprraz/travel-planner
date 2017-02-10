@@ -2,8 +2,8 @@
 
 module.exports = function() {
   return {
-    obfuscate(game) {
-      return Object.assign({}, game, {word: undefined})
+    obfuscate(user) {
+      return Object.assign({}, user, {password: undefined})
     }
   };
 };
