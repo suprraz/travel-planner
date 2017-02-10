@@ -69,9 +69,11 @@ export default class SignUp extends Component {
     })
     .then((response) => response.json())
     .then((responseJson) => {
-      if(responseJson.errmsg) {
-        this.setState( {alert: responseJson.errmsg});
-      }
+        if(responseJson.errmsg) {
+            this.setState( {alert: responseJson.errmsg});
+        } else {
+            this.props.router.push('/dashboard');
+        }
     })
     .catch((error) => {
       console.error(error);

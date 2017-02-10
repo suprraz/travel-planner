@@ -16,25 +16,48 @@ export default class Login extends Component {
   }
 
   componentDidMount() {
+    this.getTrips()
+  }
+
+  getTrips() {
+      fetch(serverHost + '/trips', {
+          method: 'GET',
+          headers: {
+              'Accept': 'application/json',
+              'Content-Type': 'application/json',
+          }
+      })
+      .then((response) => response.json())
+      .then((responseJson) => {
+          if(responseJson.errmsg) {
+              this.setState( {alert: responseJson.errmsg});
+          } else {
+              this.setState( {trips: responseJson});
+              this.clearInputs();
+              this.forceUpdate();
+          }
+      })
+      .catch((error) => {
+          console.error(error);
+      });
   }
 
   addTrip() {
     const destination = this.refs.destination.value;
-    const start_date = this.refs.start_date.value;
-    const end_date = this.refs.end_date.value;
+    const startDate = this.refs.startDate.value;
+    const endDate = this.refs.endDate.value;
     const comment = this.refs.comment.value;
-
 
     if(!destination) {
       this.setState( {alert: 'Please enter a destination'});
       return;
     }
 
-    if(!start_date) {
+    if(!startDate) {
       this.setState( {alert: 'Please enter a start date'});
       return;
     }
-    if(!end_date) {
+    if(!endDate) {
       this.setState( {alert: 'Please enter an end date'});
       return;
     }
@@ -52,8 +75,8 @@ export default class Login extends Component {
       },
       body: JSON.stringify({
         destination,
-        start_date,
-        end_date,
+        startDate,
+        endDate,
         comment
       })
     })
@@ -62,9 +85,7 @@ export default class Login extends Component {
       if(responseJson.errmsg) {
         this.setState( {alert: responseJson.errmsg});
       } else {
-        this.setState( {trips: responseJson.trips});
-        this.clearInputs();
-        this.forceUpdate();
+        this.getTrips()
       }
     })
     .catch((error) => {
@@ -74,8 +95,8 @@ export default class Login extends Component {
 
   clearInputs() {
     this.refs.destination.value = '';
-    this.refs.start_date.value = '';
-    this.refs.end_date.value = '';
+    this.refs.startDate.value = '';
+    this.refs.endDate.value = '';
     this.refs.comment.value = '';
   }
 
@@ -84,9 +105,24 @@ export default class Login extends Component {
   }
 
   render() {
-    const trips = <div>
-      <h5>No trips to show.</h5>
-    </div>
+    let trips = <h5>No trips to show.</h5>;
+
+    if(this.state.trips && this.state.trips.length) {
+      let rows = []
+      for(var i = 0; i < this.state.trips.length; i++) {
+        const trip = this.state.trips[i];
+        rows.push(<tr>
+          <td>{trip.destination}</td>
+          <td>{trip.startDate}</td>
+          <td>{trip.endDate}</td>
+          <td>{trip.comment}</td>
+        </tr>)
+      }
+      trips = <table>
+          {rows}
+      </table>
+
+    }
 
     const addTrip = <div>
 
@@ -97,10 +133,10 @@ export default class Login extends Component {
       </h3>
 
       <h3>
-        <input type="text" ref="start_date" size="20" placeholder="Start Date" onChange={() => {this.clearAlert()}}></input>
+        <input type="text" ref="startDate" size="20" placeholder="Start Date" onChange={() => {this.clearAlert()}} value={(new Date).toISOString()}></input>
       </h3>
       <h3>
-        <input type="text" ref="end_date" size="20" placeholder="End Date" onChange={() => {this.clearAlert()}}></input>
+        <input type="text" ref="endDate" size="20" placeholder="End Date" onChange={() => {this.clearAlert()}} value={(new Date).toISOString()}></input>
       </h3>
       <h3>
         <textarea type="text" ref="comment" size="20" placeholder="Comment" onChange={() => {this.clearAlert()}}></textarea>
@@ -108,7 +144,6 @@ export default class Login extends Component {
 
       <button onClick={() => this.addTrip()}>Add Trip</button>
     </div>
-
 
     return (
       <div className="page">

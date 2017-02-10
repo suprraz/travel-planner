@@ -72,10 +72,11 @@ module.exports = function authorize(app){
 
 
   // Only admins are allowed to get the full list of users
-  app.get('/trips', adminOnly);
+    //TODO: uncomment this
+    //app.get('/trips', adminOnly);
 
   // Only admins can create new users
-  app.post('/trips', yourselfOnly);
+  // app.post('/trips', yourselfOnly);
 
   // Users can only retrieve their own account
   app.get('/trips/{tripId}', yourselfOnly);

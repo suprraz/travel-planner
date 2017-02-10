@@ -49,7 +49,29 @@ definitions:
       username: jdoe
       name: John Doe
 
-
+  trip:
+    description: a registered trip
+    required: [destination, startDate, endDate]
+    properties:
+      destination:
+        type: string
+        minLength: 1
+        maxLength: 20
+        pattern: "^\\w+$"   # only allows alphanumeric characters
+        description: name of the destination
+      startDate:
+        type: string
+        format: date-time
+        description: start date
+      endDate:
+        type: string
+        format: date-time
+        description: end date
+      comment:
+        type: string
+        minLength: 1
+        maxLength: 2000
+        description: trip comment
 
 # NOTE: This does NOT set global parameters for all operations.
 # It just defines parameter templates that can be referenced by operations (i.e. it saves typing)
@@ -222,3 +244,42 @@ paths:
           description: You tried to log someone else out, and you're not the "admin" user.
         404:
           description: The {username} was not found
+
+  /trips:
+    x-swagger-router-controller: trips
+    get:
+      operationId: getAllTrips
+      summary: Returns all trips in the database.
+      description: Only the "admin" user can access this.
+      responses:
+        200:
+          description: Returns the list of trips
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/trip"
+        401:
+          description: Hey! You're not the "admin" trip!
+
+    post:
+      operationId: saveTrip
+      summary: Creates a new trip
+      description: Only the "admin" trip can create trips.
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/trip"
+          description: The trip account to create
+      responses:
+        201:
+          description: New trip was created successfully
+          schema:
+            $ref: "#/definitions/trip"
+          headers:
+            Location:
+              type: string
+              description: The Server returns the URL of the new trip
+        400:
+          description: Bad JSON formatting in the request

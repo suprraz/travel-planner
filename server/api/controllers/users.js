@@ -9,7 +9,7 @@ module.exports = {getAll, save, getOne, login};
 //GET /users operationId
 function getAll(req, res, next) {
   User.find({}, function(err, users){
-    if(err || true){
+    if(err){
       console.log(err);
       res.statusCode = 500;
       res.send(err)
@@ -43,7 +43,7 @@ function save(req, res, next) {
       res.set('Set-Cookie', 'demo-session-id=' + user.sessionId + '; Expires=Sat, 31-Dec-2050 00:00:00 GMT; Path=/');
       res.json(utils.obfuscate(user.toJSON()));
     } else {
-      res.statusCode = 404;
+      res.statusCode = 400;
       res.send();
     }
   })
@@ -84,7 +84,9 @@ function login(req, res, next) {
           console.error('ERROR!');
           res.json(err);
         } else {
-          res.set('Set-Cookie', 'demo-session-id=' + user.sessionId + '; Expires=Sat, 31-Dec-2050 00:00:00 GMT; Path=/');
+            res.cookie('demo-session-id',  user.sessionId,
+                { expires: new Date(Date.now() + 900000), httpOnly: true });
+          // res.set('Set-Cookie', 'demo-session-id=' + user.sessionId + '; Expires=Sat, 31-Dec-2050 00:00:00 GMT; Path=/');
           res.json(utils.obfuscate(user.toJSON()));
         }
       });
