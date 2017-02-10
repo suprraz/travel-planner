@@ -35,6 +35,7 @@ export default class Login extends Component {
 
     fetch(serverHost + '/login', {
       method: 'POST',
+      credentials: 'include',
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json',

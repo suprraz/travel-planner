@@ -75,7 +75,7 @@ module.exports = {
     app.get('/users', managerOrAdminOnly);
 
     // // Only admins/managers can create new users
-    // app.post('/users', managerOrAdminOnly);
+    app.post('/users', managerOrAdminOnly);
 
     // Users/managers can only retrieve their own account
     app.get('/users/{username}', yourselfOrManagerOnly);

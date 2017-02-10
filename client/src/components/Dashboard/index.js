@@ -25,6 +25,7 @@ export default class Login extends Component {
   getTrips() {
       fetch(serverHost + '/trips', {
         method: 'GET',
+        credentials: 'include',
         headers: {
               'Accept': 'application/json',
               'Content-Type': 'application/json',
@@ -75,6 +76,7 @@ export default class Login extends Component {
 
     fetch(serverHost + '/trips', {
       method: 'POST',
+      credentials: 'include',
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
