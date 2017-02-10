@@ -153,6 +153,8 @@ export default class Login extends Component {
       .catch((error) => {
         if(error.message === 'Unauthorized') {
           this.props.router.push('/');
+        } else {
+          this.setState( {alert: error.message});
         }
       });
   }
@@ -269,9 +271,9 @@ export default class Login extends Component {
 
           <h1>Travel Planner</h1>
           <h3 className="page_title">Trip Dashboard</h3>
+          <img className="logo_small" src={require('./images/suitcase.png')} alt="suitcase"/>
           <h3 className='alert'>{this.state.alert}</h3>
 
-          <img className="logo_small" src={require('./images/suitcase.png')} alt="suitcase"/>
           {trips}
           {addTrip}
         </div>
