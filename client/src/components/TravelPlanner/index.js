@@ -4,7 +4,7 @@ import 'whatwg-fetch'
 
 import './style.css';
 
-const hangmanServer = 'http://'+ window.location.hostname +':10010';
+const serverHost = 'http://'+ window.location.hostname +':10010';
 
 const imageList = [
   require('./images/Hangman-0.svg'),
@@ -30,26 +30,8 @@ export default class TravelPlanner extends Component {
   componentDidMount() {
   }
 
-  newGame() {
-    return fetch(hangmanServer + '/game', {
-      method: 'POST',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        // firstParam: 'yourValue',
-        // secondParam: 'yourOtherValue',
-      })
-      })
-      .then((response) => response.json())
-      .then((responseJson) => {
-        this.setState({game: responseJson.game});
-        return this.state;
-      })
-      .catch((error) => {
-        console.error(error);
-      });
+  signUp() {
+    this.props.router.push('/signup');
   }
 
   guessLetter(letter) {
@@ -57,7 +39,7 @@ export default class TravelPlanner extends Component {
       this.setState( {alert: 'Please type a letter to guess.'});
       return;
     }
-    fetch(hangmanServer + '/game/' + this.state.game.id, {
+    fetch(serverHost + '/game/' + this.state.game.id, {
       method: 'PUT',
       headers: {
         'Accept': 'application/json',
@@ -88,7 +70,7 @@ export default class TravelPlanner extends Component {
       this.setState( {alert: 'Please type a word to guess.'});
       return;
     }
-    fetch(hangmanServer + '/game/' + this.state.game.id, {
+    fetch(serverHost + '/game/' + this.state.game.id, {
       method: 'PUT',
       headers: {
         'Accept': 'application/json',
@@ -118,7 +100,7 @@ export default class TravelPlanner extends Component {
       contents = <div>
         <br />
         <div className='left'>
-          <button onClick={() => {this.newGame()}}>Sign Up</button>
+          <button onClick={() => {this.signUp()}}>Sign Up</button>
         </div>
         <div className='right'>
           <button onClick={() => {this.newGame()}}>Login</button>

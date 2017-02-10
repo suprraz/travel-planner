@@ -41,33 +41,14 @@ definitions:
         minLength: 4
         description: a super-secure, four-character password :)
       name:
-        type: object
+        type: string
+        minLength: 1
         description: the user's real name
-        required: [firstName]
-        properties:
-          firstName:
-            type: string
-            minLength: 1
-          lastName:
-            type: string
-      email:
-        type: string
-      telephone:
-        type: integer
-        minimum: 1000000000
-      lastLoginDate:
-        type: string
-        format: date-time
-        description: when the user last logged in (set by the server)
-        readOnly: true
+
     example:
       username: jdoe
-      name:
-        firstName: John
-        lastName: Doe
-      email: john.doe@abc.com
-      telephone: 5551234567
-      lastLoginDate: 2015-05-11T14-00-32Z
+      name: John Doe
+
 
 
 # NOTE: This does NOT set global parameters for all operations.
@@ -114,6 +95,7 @@ paths:
           description: Hey! You're not the "admin" user!
 
     post:
+      operationId: save
       summary: Creates a new user
       description: Only the "admin" user can create users.
       parameters:

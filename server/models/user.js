@@ -4,17 +4,10 @@ var Schema = mongoose.Schema;
 
 // create a schema
 var userSchema = new Schema({
-  name: String,
+  name: { type: String, required: true},
   username: { type: String, required: true, unique: true },
   password: { type: String, required: true },
-  admin: Boolean,
-  location: String,
-  meta: {
-    age: Number,
-    website: String
-  },
-  created_at: Date,
-  updated_at: Date
+  role: { type: String, required: true, default: 'user' }
 });
 
 // the schema is useless so far

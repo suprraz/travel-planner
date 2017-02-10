@@ -4,7 +4,7 @@ var User = require('../../models/user');
 var utils = require('../helpers/utils')();
 
 // Exports all the functions to perform on the db
-module.exports = {getAll, getOne, login};
+module.exports = {getAll, save, getOne, login};
 
 //GET /users operationId
 function getAll(req, res, next) {
@@ -15,6 +15,34 @@ function getAll(req, res, next) {
       res.send(err)
     }else{
       res.send(users);
+    }
+  })
+}
+
+
+//POST /game operationId
+function save(req, res, next) {
+  var name = req.swagger.params.body.value.name;
+  var username = req.swagger.params.body.value.username;
+  var password = req.swagger.params.body.value.password;
+
+
+  var user = new User({
+    name: name,
+    username: username,
+    password: password
+  });
+
+  user.save(function (err) {
+    if(err){
+      console.log(err);
+      res.statusCode = 400;
+      res.send(err)
+    }else if(user){
+      res.send({success: 1});
+    } else {
+      res.statusCode = 404;
+      res.send();
     }
   })
 }
