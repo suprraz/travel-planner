@@ -4,24 +4,29 @@ var SwaggerExpress = require('swagger-express-mw');
 var app = require('express')();
 var mongoose = require('mongoose');
 var cookieParser = require('cookie-parser');
-var authenticate = require('./middleware/authenticate');
-var authorize = require('./middleware/authorize');
+var session = require('express-session');
+
+var authentication = require('./middleware/authentication');
+var authorization = require('./middleware/authorization');
+var cors = require('./middleware/cors');
 
 var dbOptions = { promiseLibrary: require('bluebird') };
+cors.setHeaders(app);
 
 global.db = (global.db ? global.db : mongoose.createConnection('mongodb://localhost/travel_planner', dbOptions));
 
 module.exports = app; // for testing
 app.use(cookieParser());
+app.set('trust proxy', 1) // trust first proxy
+app.use(session({
+    secret: 'keyboard cat',
+    cookie: {}
+  }
+));
 
-app.use(authenticate);
-authorize(app);
-app.all('*', function(req, res, next) {
-    res.header('Access-Control-Allow-Origin', '*');
-    res.header('Access-Control-Allow-Methods', 'PUT, GET, POST, DELETE, OPTIONS');
-    res.header('Access-Control-Allow-Headers', 'Content-Type');
-    next();
-});
+
+authentication.authenticateUser(app);
+authorization.authorizeRoutes(app);
 
 var config = {
   appRoot: __dirname // required config

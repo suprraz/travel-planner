@@ -26,7 +26,6 @@ function save(req, res, next) {
   var username = req.swagger.params.body.value.username;
   var password = req.swagger.params.body.value.password;
 
-
   var user = new User({
     name: name,
     username: username,
@@ -36,11 +35,15 @@ function save(req, res, next) {
 
   user.save(function (err) {
     if(err){
-      console.log(err);
-      res.statusCode = 400;
-      res.send(err)
+      if(err.code === 11000) {
+        res.statusCode = 409;
+      } else {
+        res.statusCode = 400;
+      }
+      res.send(err);
     }else if(user){
-      res.set('Set-Cookie', 'demo-session-id=' + user.sessionId + '; Expires=Sat, 31-Dec-2050 00:00:00 GMT; Path=/');
+      req.session.user = user;
+
       res.json(utils.obfuscate(user.toJSON()));
     } else {
       res.statusCode = 400;
@@ -84,9 +87,8 @@ function login(req, res, next) {
           console.error('ERROR!');
           res.json(err);
         } else {
-            res.cookie('demo-session-id',  user.sessionId,
-                { expires: new Date(Date.now() + 900000), httpOnly: true });
-          // res.set('Set-Cookie', 'demo-session-id=' + user.sessionId + '; Expires=Sat, 31-Dec-2050 00:00:00 GMT; Path=/');
+          req.session.user = user.toJSON();
+
           res.json(utils.obfuscate(user.toJSON()));
         }
       });

@@ -1,6 +1,7 @@
 // src/components/About/index.js
 import React, { Component } from 'react';
 import 'whatwg-fetch'
+import ApiUtils from '../../ApiUtils'
 
 import './style.css';
 
@@ -44,6 +45,7 @@ export default class Login extends Component {
         password: password
       })
     })
+    .then(ApiUtils.checkStatus)
     .then((response) => response.json())
     .then((responseJson) => {
       if(responseJson.errmsg) {
@@ -53,7 +55,9 @@ export default class Login extends Component {
       }
     })
     .catch((error) => {
-      console.error(error);
+      if(error.message === 'Unauthorized') {
+        this.setState( {alert: 'Incorrect username or password.'});
+      }
     });
   }
 

@@ -1,6 +1,7 @@
 // src/components/About/index.js
 import React, { Component } from 'react';
 import 'whatwg-fetch'
+import ApiUtils from '../../ApiUtils'
 
 import './style.css';
 
@@ -16,28 +17,6 @@ export default class SignUp extends Component {
   }
 
   componentDidMount() {
-  }
-
-  newGame() {
-    return fetch(serverHost + '/game', {
-      method: 'POST',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        // firstParam: 'yourValue',
-        // secondParam: 'yourOtherValue',
-      })
-      })
-      .then((response) => response.json())
-      .then((responseJson) => {
-        this.setState({game: responseJson.game});
-        return this.state;
-      })
-      .catch((error) => {
-        console.error(error);
-      });
   }
 
   signUp() {
@@ -67,16 +46,17 @@ export default class SignUp extends Component {
         password: password
       })
     })
+    .then(ApiUtils.checkStatus)
     .then((response) => response.json())
     .then((responseJson) => {
-        if(responseJson.errmsg) {
-            this.setState( {alert: responseJson.errmsg});
-        } else {
-            this.props.router.push('/dashboard');
-        }
+      this.props.router.push('/dashboard');
     })
     .catch((error) => {
-      console.error(error);
+      if(error.response.status === 400) {
+        this.setState( {alert: 'There was an error with your request.'});
+      } else if (error.response.status === 409) {
+        this.setState( {alert: 'username ' + username + ' is already taken'});
+      }
     });
   }
 

@@ -2,6 +2,9 @@
 import React, { Component } from 'react';
 import 'whatwg-fetch'
 
+import ApiUtils from '../../ApiUtils'
+
+
 import './style.css';
 
 const serverHost = 'http://'+ window.location.hostname +':10010';
@@ -21,12 +24,13 @@ export default class Login extends Component {
 
   getTrips() {
       fetch(serverHost + '/trips', {
-          method: 'GET',
-          headers: {
+        method: 'GET',
+        headers: {
               'Accept': 'application/json',
               'Content-Type': 'application/json',
-          }
+        }
       })
+      .then(ApiUtils.checkStatus)
       .then((response) => response.json())
       .then((responseJson) => {
           if(responseJson.errmsg) {
@@ -38,7 +42,9 @@ export default class Login extends Component {
           }
       })
       .catch((error) => {
-          console.error(error);
+        if(error.message === 'Unauthorized') {
+          this.props.router.push('/');
+        }
       });
   }
 
@@ -80,6 +86,7 @@ export default class Login extends Component {
         comment
       })
     })
+    .then(ApiUtils.checkStatus)
     .then((response) => response.json())
     .then((responseJson) => {
       if(responseJson.errmsg) {
@@ -89,7 +96,9 @@ export default class Login extends Component {
       }
     })
     .catch((error) => {
-      console.error(error);
+      if(error.message === 'Unauthorized') {
+        this.props.router.push('/');
+      }
     });
   }
 
