@@ -1,12 +1,9 @@
 'use strict';
 
 var Trip = require('../../models/trip');
-var utils = require('../helpers/utils')();
 
-// Exports all the functions to perform on the db
-module.exports = {getAllTrips: getAll, saveTrip: save, getOneTrip: getOne};
+module.exports = {getAllTrips: getAll, saveTrip: save, getOneTrip: getOne, deleteTrip: deleteOne, updateTrip: updateOne};
 
-//GET /trips operationId
 function getAll(req, res, next) {
   Trip.find({}, function(err, trips){
     if(err){
@@ -19,7 +16,6 @@ function getAll(req, res, next) {
   })
 }
 
-//POST /game operationId
 function save(req, res, next) {
   var destination = req.swagger.params.body.value.destination;
   var startDate = req.swagger.params.body.value.startDate;
@@ -48,7 +44,6 @@ function save(req, res, next) {
   })
 }
 
-//GET /trips operationId
 function getOne(req, res, next) {
   var tripBeingEdited = req.swagger.params.tripId.value;
 
@@ -64,4 +59,39 @@ function getOne(req, res, next) {
       res.send();
     }
   })
+}
+
+function updateOne(req, res, next) {
+  var tripBeingEdited = req.swagger.params.tripId.value;
+
+  var destination = req.swagger.params.body.value.destination;
+  var startDate = req.swagger.params.body.value.startDate;
+  var endDate = req.swagger.params.body.value.endDate;
+  var comment = req.swagger.params.body.value.comment;
+
+  Trip.findByIdAndUpdate(tripBeingEdited, { $set: { destination, startDate, endDate, comment }}, { new: true }, function (err, trip) {
+    if(err){
+      console.log(err);
+      res.statusCode = 500;
+      res.send(err)
+    } else {
+      res.statusCode = 204;
+      res.end();
+    }
+  });
+}
+
+function deleteOne(req, res, next) {
+  var tripBeingEdited = req.swagger.params.tripId.value;
+
+  Trip.remove({ _id: tripBeingEdited }, function(err) {
+    if(err){
+      console.log(err);
+      res.statusCode = 500;
+      res.send(err)
+    } else {
+      res.statusCode = 204;
+      res.end();
+    }
+  });
 }

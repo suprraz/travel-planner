@@ -2,8 +2,6 @@
 import React, { Component } from 'react';
 import 'whatwg-fetch'
 
-import './style.css';
-
 export default class TravelPlanner extends Component {
   login() {
     this.props.router.push('/login');

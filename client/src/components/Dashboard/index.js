@@ -5,8 +5,6 @@ import 'whatwg-fetch'
 import ApiUtils from '../../ApiUtils'
 
 
-import './style.css';
-
 const serverHost = 'http://'+ window.location.hostname +':10010';
 
 export default class Login extends Component {
@@ -104,15 +102,44 @@ export default class Login extends Component {
     });
   }
 
-  deleteTrip(trip) {
-    debugger
-    fetch(serverHost + '/trips', {
+  saveTrip(trip) {
+    const destination = trip.destination;
+    const startDate = trip.startDate;
+    const endDate = trip.endDate;
+    const comment = trip.comment;
+
+    if(!destination) {
+      this.setState( {alert: 'Please enter a destination'});
+      return;
+    }
+
+    if(!startDate) {
+      this.setState( {alert: 'Please enter a start date'});
+      return;
+    }
+    if(!endDate) {
+      this.setState( {alert: 'Please enter an end date'});
+      return;
+    }
+
+    if(!comment) {
+      this.setState( {alert: 'Please enter a comment'});
+      return;
+    }
+
+    fetch(serverHost + '/trips/' + trip._id, {
       method: 'POST',
       credentials: 'include',
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
-      }
+      },
+      body: JSON.stringify({
+        destination,
+        startDate,
+        endDate,
+        comment
+      })
     })
       .then(ApiUtils.checkStatus)
       .then((response) => response.json())
@@ -122,6 +149,26 @@ export default class Login extends Component {
         } else {
           this.getTrips()
         }
+      })
+      .catch((error) => {
+        if(error.message === 'Unauthorized') {
+          this.props.router.push('/');
+        }
+      });
+  }
+
+  deleteTrip(trip) {
+    fetch(serverHost + '/trips/' + trip._id, {
+      method: 'DELETE',
+      credentials: 'include',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      }
+    })
+      .then(ApiUtils.checkStatus)
+      .then(() => {
+        this.getTrips()
       })
       .catch((error) => {
         if(error.message === 'Unauthorized') {
@@ -161,6 +208,8 @@ export default class Login extends Component {
   }
 
   render() {
+
+
     let trips = <h5>No trips to show.</h5>;
 
     if(this.state.trips && this.state.trips.length) {
@@ -168,10 +217,18 @@ export default class Login extends Component {
       for(var i = 0; i < this.state.trips.length; i++) {
         const trip = this.state.trips[i];
         rows.push(<tr key={trip._id}>
-          <td>{trip.destination}</td>
-          <td>{trip.startDate}</td>
-          <td>{trip.endDate}</td>
-          <td>{trip.comment}</td>
+          <td>
+            <input type="text" size="20" placeholder="Destination" onChange={(event) => {this.clearAlert(); trip.destination = event.target.value;}} value={trip.destination}></input>
+          </td>
+          <td>
+            <input type="text" size="20" placeholder="Start Date" onChange={(event) => {this.clearAlert(); trip.startDate = event.target.value;}} value={trip.startDate}></input>
+          </td>
+          <td>
+            <input type="text" size="20" placeholder="End Date" onChange={(event) => {this.clearAlert(); trip.endDate = event.target.value;}} value={trip.endDate}></input>
+          </td>
+          <td>
+            <input type="text" size="20" placeholder="Comment" onChange={(event) => {this.clearAlert(); trip.comment = event.target.value;}} value={trip.comment}></input>
+          </td>
           <td><a href="#" onClick={() => this.saveTrip(trip)}>save</a></td>
           <td><a href="#" onClick={() => this.deleteTrip(trip)}>delete</a></td>
         </tr>)
@@ -187,11 +244,9 @@ export default class Login extends Component {
     const addTrip = <div>
 
       <h3>Add a trip:</h3>
-      <div className='alert'>{this.state.alert}</div>
       <h3>
         <input type="text" ref="destination" size="20" placeholder="Destination" onChange={() => {this.clearAlert()}}></input>
       </h3>
-
       <h3>
         <input type="text" ref="startDate" size="20" placeholder="Start Date" onChange={() => {this.clearAlert()}} value={(new Date).toISOString()}></input>
       </h3>
@@ -199,7 +254,7 @@ export default class Login extends Component {
         <input type="text" ref="endDate" size="20" placeholder="End Date" onChange={() => {this.clearAlert()}} value={(new Date).toISOString()}></input>
       </h3>
       <h3>
-        <textarea type="text" ref="comment" size="20" placeholder="Comment" onChange={() => {this.clearAlert()}}></textarea>
+        <input type="text" ref="comment" size="20" placeholder="Comment" onChange={() => {this.clearAlert()}}></input>
       </h3>
 
       <button onClick={() => this.addTrip()}>Add Trip</button>
@@ -214,6 +269,8 @@ export default class Login extends Component {
 
           <h1>Travel Planner</h1>
           <h3 className="page_title">Trip Dashboard</h3>
+          <h3 className='alert'>{this.state.alert}</h3>
+
           <img className="logo_small" src={require('./images/suitcase.png')} alt="suitcase"/>
           {trips}
           {addTrip}

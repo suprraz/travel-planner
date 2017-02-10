@@ -297,3 +297,41 @@ paths:
           description: You tried to retrieve someone else's account, and you're not the "admin" user.
         404:
           description: The {username} was not found
+
+    post:
+      operationId: updateTrip
+      summary: Edits a trip
+      description: Update an existing trip
+      parameters:
+        - $ref: "#/parameters/tripId"
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/trip"
+          description: The user account to create
+      responses:
+        200:
+          description: Trip data was saved successfully
+          schema:
+            $ref: "#/definitions/trip"
+        400:
+          description: Bad JSON formatting in the request
+        401:
+          description: You tried to edit someone else's account, and you're not the "admin" user.
+        404:
+          description: The {tripId} was not found
+
+
+    delete:
+      operationId: deleteTrip
+      summary: Deletes a trip
+      description: >
+        users can only retrieve their own account, not other users'. Except for the "admin" user, who can retrieve anyone.
+      parameters:
+        - $ref: "#/parameters/tripId"
+      responses:
+        204:
+          description: Trip deleted successfully
+        500:
+          description: There was an error deleting the trip

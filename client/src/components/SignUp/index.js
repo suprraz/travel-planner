@@ -3,8 +3,6 @@ import React, { Component } from 'react';
 import 'whatwg-fetch'
 import ApiUtils from '../../ApiUtils'
 
-import './style.css';
-
 const serverHost = 'http://'+ window.location.hostname +':10010';
 
 export default class SignUp extends Component {
