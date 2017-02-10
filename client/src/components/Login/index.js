@@ -48,6 +48,8 @@ export default class Login extends Component {
     .then((responseJson) => {
       if(responseJson.errmsg) {
         this.setState( {alert: responseJson.errmsg});
+      } else {
+        this.props.router.push('/dashboard');
       }
     })
     .catch((error) => {
@@ -55,36 +57,6 @@ export default class Login extends Component {
     });
   }
 
-  clearInputs() {
-    this.refs.letter.value = '';
-    this.refs.word.value = '';
-  }
-
-  guessWord(word) {
-    if(!word) {
-      this.setState( {alert: 'Please type a word to guess.'});
-      return;
-    }
-    fetch(serverHost + '/game/' + this.state.game.id, {
-      method: 'PUT',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        word: word
-      })
-    })
-      .then((response) => response.json())
-      .then((responseJson) => {
-        this.setState({game: responseJson.game});
-        this.clearInputs();
-        return this.state;
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-  }
   clearAlert() {
     this.setState( {alert: ''});
   }
