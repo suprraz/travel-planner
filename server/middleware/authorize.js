@@ -55,8 +55,8 @@ module.exports = function authorize(app){
   // Only admins/managers are allowed to get the full list of users
   app.get('/users', managerOrAdminOnly);
 
-  // Only admins/managers can create new users
-  app.post('/users', managerOrAdminOnly);
+  // // Only admins/managers can create new users
+  // app.post('/users', managerOrAdminOnly);
 
   // Users/managers can only retrieve their own account
   app.get('/users/{username}', yourselfOrManagerOnly);

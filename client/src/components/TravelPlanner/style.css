@@ -4,7 +4,6 @@
 
 .logo {
     width: 266px;
-    height: 80px;
 }
 
 .container {
@@ -34,12 +33,12 @@ button {
     text-transform: uppercase;
     padding: 10px 15px;
     margin: 20px auto;
-    color: #ccc;
-    background-color: #555;
-    background: -webkit-linear-gradient(#888, #555);
-    background: linear-gradient(#888, #555);
+    color: #eee;
+    background-color: #C75056;
+    background: -webkit-linear-gradient(#E38169, #C75056);
+    background: linear-gradient(#E38169, #C75056);
     border: 0 none;
-    border-radius: 3px;
+    border-radius: 4px;
     cursor: pointer;
 }
 

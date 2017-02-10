@@ -16,7 +16,7 @@ const imageList = [
   require('./images/Hangman-6.svg')
 ];
 
-export default class Game extends Component {
+export default class TravelPlanner extends Component {
   constructor(props) {
     super(props);
 
@@ -116,7 +116,13 @@ export default class Game extends Component {
     let contents = [];
     if(!this.state.game) {
       contents = <div>
-        <button onClick={() => {this.newGame()}}>New Game</button>
+        <br />
+        <div className='left'>
+          <button onClick={() => {this.newGame()}}>Sign Up</button>
+        </div>
+        <div className='right'>
+          <button onClick={() => {this.newGame()}}>Login</button>
+        </div>
       </div>
     }
     else if(this.state.game.mistakes >= 6) {
@@ -161,8 +167,8 @@ export default class Game extends Component {
     return (
       <div className="page">
         <div className="container">
-
-          <img className="logo" src={require('./images/hangman-logo.png')} alt="hangman"/>
+          <h1>Travel Planner</h1>
+          <img className="logo" src={require('./images/suitcase.png')} alt="hangman"/>
 
           {contents}
         </div>
