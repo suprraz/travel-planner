@@ -26,7 +26,7 @@ module.exports = function authorize(app){
   }
 
   function yourselfOrManagerOnly(req, res, next) {
-    var userBeingEdited = req.swagger.params.username;
+    var userBeingEdited = req.swagger.params.username.value;
 
     if (req.user.username === userBeingEdited || req.user.role === 'admin' || req.user.role === 'manager' ) {
       // You're editing yourself.  Or you're an admin.  Either way, you may proceed.
@@ -39,7 +39,7 @@ module.exports = function authorize(app){
   }
 
   function yourselfOnly(req, res, next) {
-    var userBeingEdited = req.swagger.params.username;
+    var userBeingEdited = req.swagger.params.username.value;
 
     if (req.user.username === userBeingEdited || req.user.role === 'admin' ) {
       // You're editing yourself.  Or you're an admin.  Either way, you may proceed.

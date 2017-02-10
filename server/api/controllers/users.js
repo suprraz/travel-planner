@@ -4,7 +4,7 @@ var User = require('../../models/user');
 var utils = require('../helpers/utils')();
 
 // Exports all the functions to perform on the db
-module.exports = {getAll, login};
+module.exports = {getAll, getOne, login};
 
 //GET /users operationId
 function getAll(req, res, next) {
@@ -17,7 +17,24 @@ function getAll(req, res, next) {
       res.send(users);
     }
   })
+}
 
+//GET /users operationId
+function getOne(req, res, next) {
+  var userBeingEdited = req.swagger.params.username.value;
+
+  User.findOne({username: userBeingEdited}, function(err, user){
+    if(err){
+      console.log(err);
+      res.statusCode = 500;
+      res.send(err)
+    }else if(user){
+      res.send(user);
+    } else {
+      res.statusCode = 404;
+      res.send();
+    }
+  })
 }
 
 function login(req, res, next) {

@@ -139,12 +139,13 @@ paths:
   /users/{username}:
     x-swagger-router-controller: users
     get:
+      operationId: getOne
       summary: Retrieves a user
       description: >
         users can only retrieve their own account, not other users'. Except for the "admin" user, who can retrieve anyone.
       parameters:
-        - *username
-        - *sessionCookie
+        - $ref: "#/parameters/username"
+        - $ref: "#/parameters/sessionCookie"
       responses:
         200:
           description: Returns the user's data
@@ -160,9 +161,9 @@ paths:
       description: >
         Users can only edit their own account, not other users'.  Except for the "admin" user, who can edit anyone.
       parameters:
-        - *username
-        - *userData
-        - *sessionCookie
+        - $ref: "#/parameters/username"
+        - $ref: "#/parameters/userData"
+        - $ref: "#/parameters/sessionCookie"
       responses:
         200:
           description: User data was saved successfully
@@ -180,8 +181,8 @@ paths:
       description: >
         Users can only delete their own account, not other users'.  Except for the "admin" user, who can delete anyone.
       parameters:
-        - *username
-        - *sessionCookie
+        - $ref: "#/parameters/username"
+        - $ref: "#/parameters/sessionCookie"
       responses:
         204:
           description: User account was deleted
@@ -224,8 +225,8 @@ paths:
       description: >
         Users can only log themselves out, not other users. Except the "admin" user, who can log-out anyone.
       parameters:
-        - *username
-        - *sessionCookie
+        - $ref: "#/parameters/username"
+        - $ref: "#/parameters/sessionCookie"
       responses:
         204:
           description: Logout was successful
