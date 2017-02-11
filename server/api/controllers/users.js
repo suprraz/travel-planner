@@ -8,7 +8,12 @@ module.exports = {getAll, save, getOne, login, logout};
 
 //GET /users operationId
 function getAll(req, res, next) {
-  User.find({}, function(err, users){
+  var query = {username: user.username};
+
+  if(user.role === 'admin'){
+    query = {}
+  }
+  User.find(query, function(err, users){
     if(err){
       console.log(err);
       res.statusCode = 500;

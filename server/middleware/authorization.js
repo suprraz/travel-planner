@@ -72,7 +72,7 @@ module.exports = {
     });
 
     // Only admins/managers are allowed to get the full list of users
-    app.get('/users', managerOrAdminOnly);
+    //app.get('/users', managerOrAdminOnly);
 
     // // Only admins/managers can create new users
     app.post('/users', managerOrAdminOnly);

@@ -6,6 +6,7 @@ import TravelPlanner from './components/TravelPlanner';
 import SignUp from './components/SignUp';
 import Login from './components/Login';
 import Dashboard from './components/Dashboard';
+import UserPanel from './components/UserPanel';
 import NotFound from './components/NotFound';
 
 const Routes = (props) => (
@@ -14,6 +15,7 @@ const Routes = (props) => (
     <Route path="/signup" component={SignUp} />
     <Route path="/login" component={Login} />
     <Route path="/dashboard" component={Dashboard} />
+    <Route path="/userpanel" component={UserPanel} />
     <Route path="*" component={NotFound} />
   </Router>
 );

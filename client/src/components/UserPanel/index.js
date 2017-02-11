@@ -17,11 +17,11 @@ export default class Dashboard extends Component {
   }
 
   componentDidMount() {
-    this.getTrips()
+    this.getUsers()
   }
 
-  getTrips() {
-      fetch(serverHost + '/trips', {
+  getUsers() {
+      fetch(serverHost + '/users', {
         method: 'GET',
         credentials: 'include',
         headers: {
@@ -35,7 +35,7 @@ export default class Dashboard extends Component {
           if(responseJson.errmsg) {
               this.setState( {alert: responseJson.errmsg});
           } else {
-              this.setState( {trips: responseJson});
+              this.setState( {users: responseJson});
               this.clearInputs();
               this.forceUpdate();
           }
@@ -47,32 +47,32 @@ export default class Dashboard extends Component {
       });
   }
 
-  addTrip() {
-    const destination = this.refs.destination.value;
-    const startDate = this.refs.startDate.value;
-    const endDate = this.refs.endDate.value;
-    const comment = this.refs.comment.value;
+  addUser() {
+    const name = this.refs.name.value;
+    const username = this.refs.username.value;
+    const password = this.refs.password.value;
+    const role = this.refs.role.value;
 
-    if(!destination) {
-      this.setState( {alert: 'Please enter a destination'});
+    if(!name) {
+      this.setState( {alert: 'Please enter a name'});
       return;
     }
 
-    if(!startDate) {
+    if(!username) {
       this.setState( {alert: 'Please enter a start date'});
       return;
     }
-    if(!endDate) {
+    if(!password) {
       this.setState( {alert: 'Please enter an end date'});
       return;
     }
 
-    if(!comment) {
-      this.setState( {alert: 'Please enter a comment'});
+    if(!role) {
+      this.setState( {alert: 'Please enter a role'});
       return;
     }
 
-    fetch(serverHost + '/trips', {
+    fetch(serverHost + '/users', {
       method: 'POST',
       credentials: 'include',
       headers: {
@@ -80,10 +80,10 @@ export default class Dashboard extends Component {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        destination,
-        startDate,
-        endDate,
-        comment
+        name,
+        username,
+        password,
+        role
       })
     })
     .then(ApiUtils.checkStatus)
@@ -92,7 +92,7 @@ export default class Dashboard extends Component {
       if(responseJson.errmsg) {
         this.setState( {alert: responseJson.errmsg});
       } else {
-        this.getTrips()
+        this.getUsers()
       }
     })
     .catch((error) => {
@@ -102,32 +102,32 @@ export default class Dashboard extends Component {
     });
   }
 
-  saveTrip(trip) {
-    const destination = trip.destination;
-    const startDate = trip.startDate;
-    const endDate = trip.endDate;
-    const comment = trip.comment;
+  saveUser(user) {
+    const name = user.name;
+    const username = user.username;
+    const password = user.password;
+    const role = user.role;
 
-    if(!destination) {
-      this.setState( {alert: 'Please enter a destination'});
+    if(!name) {
+      this.setState( {alert: 'Please enter a name'});
       return;
     }
 
-    if(!startDate) {
+    if(!username) {
       this.setState( {alert: 'Please enter a start date'});
       return;
     }
-    if(!endDate) {
+    if(!password) {
       this.setState( {alert: 'Please enter an end date'});
       return;
     }
 
-    if(!comment) {
-      this.setState( {alert: 'Please enter a comment'});
+    if(!role) {
+      this.setState( {alert: 'Please enter a role'});
       return;
     }
 
-    fetch(serverHost + '/trips/' + trip._id, {
+    fetch(serverHost + '/users/' + user._id, {
       method: 'POST',
       credentials: 'include',
       headers: {
@@ -135,10 +135,10 @@ export default class Dashboard extends Component {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        destination,
-        startDate,
-        endDate,
-        comment
+        name,
+        username,
+        password,
+        role
       })
     })
       .then(ApiUtils.checkStatus)
@@ -147,7 +147,7 @@ export default class Dashboard extends Component {
         if(responseJson.errmsg) {
           this.setState( {alert: responseJson.errmsg});
         } else {
-          this.getTrips()
+          this.getUsers()
         }
       })
       .catch((error) => {
@@ -159,8 +159,8 @@ export default class Dashboard extends Component {
       });
   }
 
-  deleteTrip(trip) {
-    fetch(serverHost + '/trips/' + trip._id, {
+  deleteUser(user) {
+    fetch(serverHost + '/users/' + user._id, {
       method: 'DELETE',
       credentials: 'include',
       headers: {
@@ -170,7 +170,7 @@ export default class Dashboard extends Component {
     })
       .then(ApiUtils.checkStatus)
       .then(() => {
-        this.getTrips()
+        this.getUsers()
       })
       .catch((error) => {
         if(error.message === 'Unauthorized') {
@@ -198,15 +198,15 @@ export default class Dashboard extends Component {
       });
   }
 
-  userpanel() {
-    this.props.router.push('/userpanel');
+  dashboard() {
+    this.props.router.push('/dashboard');
   }
 
   clearInputs() {
-    this.refs.destination.value = '';
-    this.refs.startDate.value = '';
-    this.refs.endDate.value = '';
-    this.refs.comment.value = '';
+    this.refs.name.value = '';
+    this.refs.username.value = '';
+    this.refs.password.value = '';
+    this.refs.role.value = '';
   }
 
   clearAlert() {
@@ -216,30 +216,30 @@ export default class Dashboard extends Component {
   render() {
 
 
-    let trips = <h5>No trips to show.</h5>;
+    let users = <h5>No users to show.</h5>;
 
-    if(this.state.trips && this.state.trips.length) {
+    if(this.state.users && this.state.users.length) {
       let rows = []
-      for(var i = 0; i < this.state.trips.length; i++) {
-        const trip = this.state.trips[i];
-        rows.push(<tr key={trip._id}>
+      for(var i = 0; i < this.state.users.length; i++) {
+        const user = this.state.users[i];
+        rows.push(<tr key={user._id}>
           <td>
-            <input type="text" size="20" placeholder="Destination" onChange={(event) => {this.clearAlert(); trip.destination = event.target.value;}} value={trip.destination}></input>
+            <input type="text" size="20" placeholder="Name" onChange={(event) => {this.clearAlert(); user.name = event.target.value;}} value={user.name}></input>
           </td>
           <td>
-            <input type="text" size="20" placeholder="Start Date" onChange={(event) => {this.clearAlert(); trip.startDate = event.target.value;}} value={trip.startDate}></input>
+            <input type="text" size="20" placeholder="username" onChange={(event) => {this.clearAlert(); user.username = event.target.value;}} value={user.username}></input>
           </td>
           <td>
-            <input type="text" size="20" placeholder="End Date" onChange={(event) => {this.clearAlert(); trip.endDate = event.target.value;}} value={trip.endDate}></input>
+            <input type="text" size="20" placeholder="password" onChange={(event) => {this.clearAlert(); user.password = event.target.value;}} value={user.password}></input>
           </td>
           <td>
-            <input type="text" size="20" placeholder="Comment" onChange={(event) => {this.clearAlert(); trip.comment = event.target.value;}} value={trip.comment}></input>
+            <input type="text" size="20" placeholder="role" onChange={(event) => {this.clearAlert(); user.role = event.target.value;}} value={user.role}></input>
           </td>
-          <td><a href="#" onClick={() => this.saveTrip(trip)}>save</a></td>
-          <td><a href="#" onClick={() => this.deleteTrip(trip)}>delete</a></td>
+          <td><a href="#" onClick={() => this.saveUser(user)}>save</a></td>
+          <td><a href="#" onClick={() => this.deleteUser(user)}>delete</a></td>
         </tr>)
       }
-      trips = <table>
+      users = <table>
         <tbody>
           {rows}
         </tbody>
@@ -247,44 +247,40 @@ export default class Dashboard extends Component {
 
     }
 
-    const addTrip = <div>
+    const addUser = <div>
 
-      <h3>Add a trip:</h3>
+      <h3>Add a user:</h3>
       <h3>
-        <input type="text" ref="destination" size="20" placeholder="Destination" onChange={() => {this.clearAlert()}}></input>
+        <input type="text" ref="name" size="20" placeholder="Name" onChange={() => {this.clearAlert()}}></input>
       </h3>
       <h3>
-        <input type="text" ref="startDate" size="20" placeholder="Start Date" onChange={() => {this.clearAlert()}} value={(new Date).toISOString()}></input>
+        <input type="text" ref="username" size="20" placeholder="Start Date" onChange={() => {this.clearAlert()}} value={(new Date).toISOString()}></input>
       </h3>
       <h3>
-        <input type="text" ref="endDate" size="20" placeholder="End Date" onChange={() => {this.clearAlert()}} value={(new Date).toISOString()}></input>
+        <input type="text" ref="password" size="20" placeholder="End Date" onChange={() => {this.clearAlert()}} value={(new Date).toISOString()}></input>
       </h3>
       <h3>
-        <input type="text" ref="comment" size="20" placeholder="Comment" onChange={() => {this.clearAlert()}}></input>
+        <input type="text" ref="role" size="20" placeholder="Role" onChange={() => {this.clearAlert()}}></input>
       </h3>
 
-      <button onClick={() => this.addTrip()}>Add Trip</button>
+      <button onClick={() => this.addUser()}>Add User</button>
     </div>
 
     return (
       <div className="page">
         <div className="container">
-
-
-
           <div className="logout" >
-            <a href="#" onClick={() => this.userpanel()}>User Panel</a>
+            <a href="#" onClick={() => this.dashboard()}>Dashboard</a>
             &nbsp;|&nbsp;
             <a href="#" onClick={() => this.logout()}>Log out</a>
           </div>
 
-          <h1 className="page_title">Trip Dashboard</h1>
-
+          <h1 className="page_title">User Panel</h1>
           <img className="logo_small" src={require('./images/suitcase.png')} alt="suitcase"/>
           <h3 className='alert'>{this.state.alert}</h3>
 
-          {trips}
-          {addTrip}
+          {users}
+          {addUser}
         </div>
       </div>
     );
