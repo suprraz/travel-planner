@@ -3,6 +3,27 @@ import React, { Component } from 'react';
 import 'whatwg-fetch'
 
 import ApiUtils from '../../ApiUtils'
+import RaisedButton from 'material-ui/RaisedButton';
+
+import AppBar from 'material-ui/AppBar';
+import Card from 'material-ui/Card'
+import CardActions from 'material-ui/Card/CardActions'
+import CardHeader from 'material-ui/Card/CardHeader'
+import TextField from 'material-ui/TextField'
+import IconMenu from 'material-ui/IconMenu'
+import IconButton from 'material-ui/IconButton'
+import MenuItem from 'material-ui/MenuItem'
+import DatePicker from 'material-ui/DatePicker'
+import Dialog from 'material-ui/Dialog'
+import Table from 'material-ui/Table'
+import TableBody from 'material-ui/Table/TableBody'
+import TableHeader from 'material-ui/Table/TableHeader'
+import TableHeaderColumn from 'material-ui/Table/TableHeaderColumn'
+import TableRow from 'material-ui/Table/TableRow'
+import TableRowColumn from 'material-ui/Table/TableRowColumn'
+
+import ExitToApp from 'material-ui/svg-icons/action/exit-to-app';
+import MoreHoriz from 'material-ui/svg-icons/navigation/more-horiz';
 
 
 const serverHost = 'http://'+ window.location.hostname +':10010';
@@ -12,7 +33,9 @@ export default class Dashboard extends Component {
     super(props);
 
     this.state = {
-      alert: ''
+      addTripDialogOpen: false,
+      alert: '',
+      editAlert: ''
     };
   }
 
@@ -48,10 +71,10 @@ export default class Dashboard extends Component {
   }
 
   addTrip() {
-    const destination = this.refs.destination.value;
-    const startDate = this.refs.startDate.value;
-    const endDate = this.refs.endDate.value;
-    const comment = this.refs.comment.value;
+    const destination = this.refs.destination.getValue();
+    const startDate = this.refs.startDate.getDate().toISOString();
+    const endDate = this.refs.endDate.getDate().toISOString();
+    const comment = this.refs.comment.getValue();
 
     if(!destination) {
       this.setState( {alert: 'Please enter a destination'});
@@ -71,6 +94,12 @@ export default class Dashboard extends Component {
       this.setState( {alert: 'Please enter a comment'});
       return;
     }
+
+    if(this.refs.endDate.getDate() < this.refs.startDate.getDate()) {
+      this.setState( {alert: 'Trip must end after it starts'});
+      return;
+    }
+
 
     fetch(serverHost + '/trips', {
       method: 'POST',
@@ -92,6 +121,7 @@ export default class Dashboard extends Component {
       if(responseJson.errmsg) {
         this.setState( {alert: responseJson.errmsg});
       } else {
+        this.setState({addTripDialogOpen:false});
         this.getTrips()
       }
     })
@@ -108,22 +138,27 @@ export default class Dashboard extends Component {
     const endDate = trip.endDate;
     const comment = trip.comment;
 
+    if(endDate < startDate) {
+      this.setState( {editAlert: 'Trip must end after it starts'});
+      return;
+    }
+
     if(!destination) {
-      this.setState( {alert: 'Please enter a destination'});
+      this.setState( {editAlert: 'Please enter a destination'});
       return;
     }
 
     if(!startDate) {
-      this.setState( {alert: 'Please enter a start date'});
+      this.setState( {editAlert: 'Please enter a start date'});
       return;
     }
     if(!endDate) {
-      this.setState( {alert: 'Please enter an end date'});
+      this.setState( {editAlert: 'Please enter an end date'});
       return;
     }
 
     if(!comment) {
-      this.setState( {alert: 'Please enter a comment'});
+      this.setState( {editAlert: 'Please enter a comment'});
       return;
     }
 
@@ -145,7 +180,7 @@ export default class Dashboard extends Component {
       .then((response) => response.json())
       .then((responseJson) => {
         if(responseJson.errmsg) {
-          this.setState( {alert: responseJson.errmsg});
+          this.setState( {editAlert: responseJson.errmsg});
         } else {
           this.getTrips()
         }
@@ -154,7 +189,7 @@ export default class Dashboard extends Component {
         if(error.message === 'Unauthorized') {
           this.props.router.push('/');
         } else {
-          this.setState( {alert: error.message});
+          this.setState( {editAlert: error.message});
         }
       });
   }
@@ -210,7 +245,7 @@ export default class Dashboard extends Component {
   }
 
   clearAlert() {
-    this.setState( {alert: ''});
+    this.setState( {alert: '', editAlert: ''});
   }
 
   render() {
@@ -222,69 +257,96 @@ export default class Dashboard extends Component {
       let rows = []
       for(var i = 0; i < this.state.trips.length; i++) {
         const trip = this.state.trips[i];
-        rows.push(<tr key={trip._id}>
-          <td>
-            <input type="text" size="20" placeholder="Destination" onChange={(event) => {this.clearAlert(); trip.destination = event.target.value;}} value={trip.destination}></input>
-          </td>
-          <td>
-            <input type="text" size="20" placeholder="Start Date" onChange={(event) => {this.clearAlert(); trip.startDate = event.target.value;}} value={trip.startDate}></input>
-          </td>
-          <td>
-            <input type="text" size="20" placeholder="End Date" onChange={(event) => {this.clearAlert(); trip.endDate = event.target.value;}} value={trip.endDate}></input>
-          </td>
-          <td>
-            <input type="text" size="20" placeholder="Comment" onChange={(event) => {this.clearAlert(); trip.comment = event.target.value;}} value={trip.comment}></input>
-          </td>
-          <td><a href="#" onClick={() => this.saveTrip(trip)}>save</a></td>
-          <td><a href="#" onClick={() => this.deleteTrip(trip)}>delete</a></td>
-        </tr>)
+        rows.push(<TableRow key={trip._id} selectable={false}>
+          <TableRowColumn>
+            <TextField name={trip._id + 'destination'} placeholder="Destination" onChange={(err, value) => {this.clearAlert(); console.log(value); trip.destination =  value;}} value={trip.destination}></TextField>
+          </TableRowColumn>
+          <TableRowColumn>
+            <DatePicker ref="startDate" name={trip._id + 'startdate'} style={{margin:10}} autoOk={true} onChange={(err, newDate) => {this.clearAlert(); trip.startDate = newDate.toISOString();}} value={new Date(trip.startDate)}></DatePicker>
+          </TableRowColumn>
+          <TableRowColumn>
+            <DatePicker ref="endDate" name={trip._id + 'enddate'} style={{margin:10}} autoOk={true} onChange={(err, newDate) => {this.clearAlert(); trip.endDate = newDate.toISOString();}} value={new Date(trip.endDate)}></DatePicker>
+          </TableRowColumn>
+          <TableRowColumn>
+            <TextField name={trip._id + 'comment'} placeholder="Comment" onChange={(err, value) => {this.clearAlert(); trip.comment = value;}} value={trip.comment}></TextField>
+          </TableRowColumn>
+          <TableRowColumn><a href="#" name="#" style={{margin:10}} onClick={() => this.saveTrip(trip)}>save</a></TableRowColumn>
+          <TableRowColumn><a href="#" name="#" style={{margin:10}} onClick={() => this.deleteTrip(trip)}>delete</a></TableRowColumn>
+        </TableRow>)
       }
-      trips = <table>
-        <tbody>
+      trips = <div>        <div className='alert'>{this.state.editAlert}</div>
+        <Table>
+          <TableHeader displaySelectAll={false}>
+            <TableRow>
+              <TableHeaderColumn>Destination</TableHeaderColumn>
+              <TableHeaderColumn>Start Date</TableHeaderColumn>
+              <TableHeaderColumn>End Date</TableHeaderColumn>
+              <TableHeaderColumn>Comment</TableHeaderColumn>
+              <TableHeaderColumn></TableHeaderColumn>
+              <TableHeaderColumn></TableHeaderColumn>
+            </TableRow>
+          </TableHeader>
+        <TableBody displayRowCheckbox={false}>
           {rows}
-        </tbody>
-      </table>
+        </TableBody>
+      </Table>
+      </div>
 
     }
-
-    const addTrip = <div>
-
-      <h3>Add a trip:</h3>
-      <h3>
-        <input type="text" ref="destination" size="20" placeholder="Destination" onChange={() => {this.clearAlert()}}></input>
-      </h3>
-      <h3>
-        <input type="text" ref="startDate" size="20" placeholder="Start Date" onChange={() => {this.clearAlert()}} value={(new Date).toISOString()}></input>
-      </h3>
-      <h3>
-        <input type="text" ref="endDate" size="20" placeholder="End Date" onChange={() => {this.clearAlert()}} value={(new Date).toISOString()}></input>
-      </h3>
-      <h3>
-        <input type="text" ref="comment" size="20" placeholder="Comment" onChange={() => {this.clearAlert()}}></input>
-      </h3>
-
-      <button onClick={() => this.addTrip()}>Add Trip</button>
-    </div>
 
     return (
       <div className="page">
         <div className="container">
+          <AppBar title="Travel Planner: Trip Dashboard"
+                  iconElementLeft={
+                    <img className="logo" style={{height:'2em', width: '2em', 'marginTop': '0.5em'}} src={require('./images/suitcase.png')} alt="hangman"/>
+                  }
+                  iconElementRight={
+                    <IconMenu
+                      iconButtonElement={
+                        <IconButton><MoreHoriz /></IconButton>
+                      }
+                    >
+                      <MenuItem
+                        linkButton={true}
+                        onClick={() => this.logout()}>Log out</MenuItem>
 
+                      <MenuItem
+                        linkButton={true}
+                        primaryText="User Settings"
+                        onClick={() => this.userpanel()}/>
+                    </IconMenu>
+                  }
+          />
 
+          <br />
 
-          <div className="logout" >
-            <a href="#" onClick={() => this.userpanel()}>User Panel</a>
-            &nbsp;|&nbsp;
-            <a href="#" onClick={() => this.logout()}>Log out</a>
-          </div>
+          <RaisedButton onClick={()=>{this.setState({addTripDialogOpen:true})}}>Add Trip</RaisedButton>
 
-          <h1 className="page_title">Trip Dashboard</h1>
+          <br />
+          <br />
 
-          <img className="logo_small" src={require('./images/suitcase.png')} alt="suitcase"/>
-          <h3 className='alert'>{this.state.alert}</h3>
+          <Dialog title={'Add Trip'} open={this.state.addTripDialogOpen}
+                  actions={[
+                    <RaisedButton onClick={() => this.setState({addTripDialogOpen:false})}>Cancel</RaisedButton>,
+                    <RaisedButton onClick={() => this.addTrip()}
+                    >Add Trip</RaisedButton>]}>
+            <div className='alert'>{this.state.alert}</div>
+
+              <TextField type="text" ref="destination" name="destination" style={{margin:10}} size="20" placeholder="Destination" onChange={() => {this.clearAlert()}}></TextField>
+              <br />
+              <DatePicker ref="startDate" name="startDate" style={{margin:10}} autoOk={true} onChange={() => {this.clearAlert()}} defaultDate={(new Date)}></DatePicker>
+              <br />
+              <DatePicker ref="endDate" name="endDate" style={{margin:10}} autoOk={true} onChange={() => {this.clearAlert()}}  defaultDate={(new Date)}></DatePicker>
+              <br />
+              <TextField type="text" ref="comment" name="comment" style={{margin:10}} size="20" placeholder="Comment" onChange={() => {this.clearAlert()}}></TextField>
+              <br />
+          </Dialog>
+
 
           {trips}
-          {addTrip}
+
+
         </div>
       </div>
     );

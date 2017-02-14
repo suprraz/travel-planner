@@ -5,7 +5,13 @@ var Trip = require('../../models/trip');
 module.exports = {getAllTrips: getAll, saveTrip: save, getOneTrip: getOne, deleteTrip: deleteOne, updateTrip: updateOne};
 
 function getAll(req, res, next) {
-  Trip.find({}, function(err, trips){
+  var query = {owner: req.user.username};
+
+  if(req.user.role === 'admin' || req.user.role === 'manager' ){
+    query = {}
+  }
+
+  Trip.find(query, function(err, trips){
     if(err){
       console.log(err);
       res.statusCode = 500;
@@ -76,7 +82,7 @@ function updateOne(req, res, next) {
       res.send(err)
     } else {
       res.statusCode = 204;
-      res.end();
+      res.json(trip.toJSON());
     }
   });
 }

@@ -72,7 +72,7 @@ module.exports = {
     });
 
     // Only admins/managers are allowed to get the full list of users
-    app.get('/users', managerOrAdminOnly);
+    app.get('/users', authenticatedOnly);
 
     // Users/managers can only retrieve their own account
     app.get('/users/{username}', yourselfOrManagerOnly);

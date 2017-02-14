@@ -7,7 +7,7 @@ import ApiUtils from '../../ApiUtils'
 
 const serverHost = 'http://'+ window.location.hostname +':10010';
 
-export default class Dashboard extends Component {
+export default class UserPanel extends Component {
   constructor(props) {
     super(props);
 
