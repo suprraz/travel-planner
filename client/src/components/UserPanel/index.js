@@ -127,7 +127,7 @@ export default class Dashboard extends Component {
       return;
     }
 
-    fetch(serverHost + '/users/' + user._id, {
+    fetch(serverHost + '/users/' + user.username, {
       method: 'POST',
       credentials: 'include',
       headers: {
@@ -160,7 +160,7 @@ export default class Dashboard extends Component {
   }
 
   deleteUser(user) {
-    fetch(serverHost + '/users/' + user._id, {
+    fetch(serverHost + '/users/' + user.username, {
       method: 'DELETE',
       credentials: 'include',
       headers: {
@@ -222,7 +222,7 @@ export default class Dashboard extends Component {
       let rows = []
       for(var i = 0; i < this.state.users.length; i++) {
         const user = this.state.users[i];
-        rows.push(<tr key={user._id}>
+        rows.push(<tr key={user.username}>
           <td>
             <input type="text" size="20" placeholder="Name" onChange={(event) => {this.clearAlert(); user.name = event.target.value;}} value={user.name}></input>
           </td>

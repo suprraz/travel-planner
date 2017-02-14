@@ -169,13 +169,13 @@ paths:
           description: The {username} was not found
 
     post:
+      operationId: updateOne
       summary: Edits a user
       description: >
         Users can only edit their own account, not other users'.  Except for the "admin" user, who can edit anyone.
       parameters:
         - $ref: "#/parameters/username"
         - $ref: "#/parameters/userData"
-        - $ref: "#/parameters/sessionCookie"
       responses:
         200:
           description: User data was saved successfully
