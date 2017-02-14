@@ -1,6 +1,10 @@
 // src/components/About/index.js
 import React, { Component } from 'react';
 import 'whatwg-fetch'
+import RaisedButton from 'material-ui/RaisedButton';
+import AppBar from 'material-ui/AppBar';
+import Card from 'material-ui/Card'
+import CardActions from 'material-ui/Card/CardActions'
 
 export default class TravelPlanner extends Component {
   login() {
@@ -12,23 +16,19 @@ export default class TravelPlanner extends Component {
   }
 
   render() {
-    const contents = <div>
-        <br />
-        <div className='left'>
-          <button onClick={() => {this.signUp()}}>Sign Up</button>
-        </div>
-        <div className='right'>
-          <button onClick={() => {this.login()}}>Login</button>
-        </div>
-      </div>
-
     return (
       <div className="page">
         <div className="container">
-          <h1>Travel Planner</h1>
-          <img className="logo" src={require('./images/suitcase.png')} alt="hangman"/>
+          <AppBar title="Travel Planner"></AppBar>
+          <Card>
+            <img className="logo" src={require('./images/suitcase.png')} alt="hangman"/>
+            <CardActions>
+              <RaisedButton primary={true} style={{margin: 12}} onClick={() => {this.signUp()}}>Sign Up</RaisedButton>
+              <RaisedButton style={{margin: 12}} onClick={() => {this.login()}}>Login</RaisedButton>
+            </CardActions>
+          </Card>
 
-          {contents}
+
         </div>
       </div>
     );

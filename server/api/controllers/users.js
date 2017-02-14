@@ -53,13 +53,9 @@ function save(req, res, next) {
         res.statusCode = 400;
       }
       res.send(err);
-    }else if(user){
-      req.session.user = user;
-
+    }else {
+      req.session.user = user.toJSON();
       res.json(utils.obfuscate(user.toJSON()));
-    } else {
-      res.statusCode = 400;
-      res.send();
     }
   })
 }

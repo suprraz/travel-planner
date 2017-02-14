@@ -2,6 +2,11 @@
 import React, { Component } from 'react';
 import 'whatwg-fetch'
 import ApiUtils from '../../ApiUtils'
+import RaisedButton from 'material-ui/RaisedButton';
+import AppBar from 'material-ui/AppBar';
+import Card from 'material-ui/Card'
+import CardActions from 'material-ui/Card/CardActions'
+import TextField from 'material-ui/TextField'
 
 const serverHost = 'http://'+ window.location.hostname +':10010';
 
@@ -18,9 +23,9 @@ export default class SignUp extends Component {
   }
 
   signUp() {
-    const name = this.refs.name.value;
-    const username = this.refs.username.value;
-    const password = this.refs.password.value;
+    const name = this.refs.name.getValue();
+    const username = this.refs.username.getValue();
+    const password = this.refs.password.getValue();
 
     if(!username) {
       this.setState( {alert: 'Please type a username to join.'});
@@ -34,6 +39,7 @@ export default class SignUp extends Component {
 
     fetch(serverHost + '/users', {
       method: 'POST',
+      credentials: 'include',
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
@@ -50,10 +56,10 @@ export default class SignUp extends Component {
       this.props.router.push('/dashboard');
     })
     .catch((error) => {
-      if(error.response.status === 400) {
-        this.setState( {alert: 'There was an error with your request.'});
-      } else if (error.response.status === 409) {
+      if (error.response && error.response.status === 409) {
         this.setState( {alert: 'username ' + username + ' is already taken'});
+      } else {
+        this.setState( {alert: 'There was an error with your request.'});
       }
     });
   }
@@ -63,32 +69,25 @@ export default class SignUp extends Component {
   }
 
   render() {
-    const contents = <div>
-        <div className='alert'>{this.state.alert}</div>
-          <h3>
-            <input ref="name" size="20" placeholder="Name" onChange={() => {this.clearAlert()}}></input>
-          </h3>
-
-          <h3>
-            <input ref="username" size="20" placeholder="username" onChange={() => {this.clearAlert()}}></input>
-          </h3>
-
-          <h3>
-            <input type="password" ref="password" size="20" placeholder="password" onChange={() => {this.clearAlert()}}></input>
-          </h3>
-
-        <button onClick={() => this.signUp()}>Join</button>
-      </div>
-
-
     return (
       <div className="page">
         <div className="container">
-          <h1>Travel Planner</h1>
-          <h3 className="page_title">Join the world's best travel planner!</h3>
-          <img className="logo_small" src={require('./images/suitcase.png')} alt="hangman"/>
+          <AppBar title="Travel Planner">
+          </AppBar>
+          <img className="logo" src={require('./images/suitcase.png')} alt="hangman"/>
+          <Card>
+            <div className='alert'>{this.state.alert}</div>
+            <TextField style={{margin:10}} name="name" ref="name" size="20" placeholder="Name" onChange={() => {this.clearAlert()}}></TextField>
+            <br />
+            <TextField style={{margin:10}} name="username" ref="username" size="20" placeholder="username" onChange={() => {this.clearAlert()}}></TextField>
+            <br />
+            <TextField style={{margin:10}} name="password" type="password" ref="password" size="20" placeholder="password" onChange={() => {this.clearAlert()}}></TextField>
 
-          {contents}
+            <CardActions>
+              <RaisedButton style={{margin: 10}} onClick={() => {this.signUp()}}>Join</RaisedButton>
+            </CardActions>
+          </Card>
+
         </div>
       </div>
     );

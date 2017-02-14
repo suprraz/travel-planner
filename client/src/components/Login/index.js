@@ -2,6 +2,11 @@
 import React, { Component } from 'react';
 import 'whatwg-fetch'
 import ApiUtils from '../../ApiUtils'
+import RaisedButton from 'material-ui/RaisedButton';
+import AppBar from 'material-ui/AppBar';
+import Card from 'material-ui/Card'
+import CardActions from 'material-ui/Card/CardActions'
+import TextField from 'material-ui/TextField'
 
 const serverHost = 'http://'+ window.location.hostname +':10010';
 
@@ -18,8 +23,8 @@ export default class Login extends Component {
   }
 
   login() {
-    const username = this.refs.username.value;
-    const password = this.refs.password.value;
+    const username = this.refs.username.getValue();
+    const password = this.refs.password.getValue();
 
     if(!username) {
       this.setState( {alert: 'Please type a username to login.'});
@@ -65,28 +70,24 @@ export default class Login extends Component {
   }
 
   render() {
-    const contents = <div>
-        <div className='alert'>{this.state.alert}</div>
-          <h3>
-            <input ref="username" size="20" placeholder="username" onChange={() => {this.clearAlert()}}></input>
-          </h3>
 
-          <h3>
-            <input type="password" ref="password" size="20" placeholder="password" onChange={() => {this.clearAlert()}}></input>
-          </h3>
-
-        <button onClick={() => this.login()}>Log In</button>
-      </div>
 
 
     return (
       <div className="page">
         <div className="container">
-          <h1>Travel Planner</h1>
-          <h3 className="page_title">Join the world's best travel planner!</h3>
-          <img className="logo_small" src={require('./images/suitcase.png')} alt="hangman"/>
-
-          {contents}
+          <AppBar title="Travel Planner">
+          </AppBar>
+          <img className="logo" src={require('./images/suitcase.png')} alt="hangman"/>
+          <Card>
+            <div className='alert'>{this.state.alert}</div>
+            <TextField style={{margin:10}} ref="username" name="username" size="20" placeholder="username" onChange={() => {this.clearAlert()}}></TextField>
+            <br />
+            <TextField style={{margin:10}} type="password" ref="password" name="password" size="20" placeholder="password" onChange={() => {this.clearAlert()}}></TextField>
+            <CardActions>
+              <RaisedButton style={{margin: 10}} onClick={() => {this.login()}}>Login</RaisedButton>
+            </CardActions>
+          </Card>
         </div>
       </div>
     );
