@@ -264,7 +264,7 @@ export default class Dashboard extends Component {
         const trip = this.state.trips[i];
         rows.push(<TableRow key={trip._id} selectable={false}>
           <TableRowColumn>
-            <TextField name={trip._id + 'destination'} placeholder="Destination" onChange={(err, value) => {this.clearAlert(); console.log(value); trip.destination =  value;}} value={trip.destination}></TextField>
+            <TextField name={trip._id + 'destination'} placeholder="Destination" onChange={(err, value) => {this.clearAlert(); trip.destination =  value;}} value={trip.destination}></TextField>
           </TableRowColumn>
           <TableRowColumn>
             <DatePicker name={trip._id + 'startdate'} style={{margin:10}} autoOk={true} onChange={(err, newDate) => {this.clearAlert(); trip.startDate = newDate.toISOString();}} value={new Date(trip.startDate)}></DatePicker>
