@@ -317,11 +317,12 @@ export default class Dashboard extends Component {
                     >
                       <MenuItem
                         linkButton={true}
-                        onClick={() => this.logout()}>Log out <ExitToAppIcon className="material-icon" /></MenuItem>
+                        onClick={() => this.userpanel()}>User Panel <VerifiedUserIcon className="material-icon" /></MenuItem>
 
                       <MenuItem
                         linkButton={true}
-                        onClick={() => this.userpanel()}>User Settings <VerifiedUserIcon className="material-icon" /></MenuItem>
+                        onClick={() => this.logout()}>Log out <ExitToAppIcon className="material-icon" /></MenuItem>
+
                     </IconMenu>
                   }
           />

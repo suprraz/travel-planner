@@ -86,9 +86,9 @@ export default class Login extends Component {
           <Card>
             <CardHeader title={'Please enter your username and password to log in'} />
             <CardText>
-            <TextField style={{margin:10}} ref="username" name="username" size="20" placeholder="username" onChange={() => {this.clearAlert()}}></TextField>
-            <TextField style={{margin:10}} type="password" ref="password" name="password" size="20" placeholder="password" onChange={() => {this.clearAlert()}}></TextField>
-            <div className='alert'>{this.state.alert}</div>
+              <TextField style={{margin:10}} ref="username" name="username" size="20" placeholder="username" onChange={() => {this.clearAlert()}}></TextField>
+              <TextField style={{margin:10}} type="password" ref="password" name="password" size="20" placeholder="password" onChange={() => {this.clearAlert()}}></TextField>
+              <div className='alert'>{this.state.alert}</div>
             </CardText>
             <CardActions>
               <RaisedButton style={{margin: 10}} onClick={() => {this.login()}}>Login</RaisedButton>

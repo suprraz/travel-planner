@@ -5,6 +5,8 @@ import ApiUtils from '../../ApiUtils'
 import RaisedButton from 'material-ui/RaisedButton';
 import AppBar from 'material-ui/AppBar';
 import Card from 'material-ui/Card'
+import CardHeader from 'material-ui/Card/CardHeader'
+import CardText from 'material-ui/Card/CardText'
 import CardActions from 'material-ui/Card/CardActions'
 import TextField from 'material-ui/TextField'
 import CardTravelIcon from 'material-ui/svg-icons/action/card-travel';
@@ -77,15 +79,16 @@ export default class SignUp extends Component {
             <CardTravelIcon className="material-icon" style={{marginTop: 10, color: 'white'}}/>
           }>
           </AppBar>
-          <img className="logo" src={require('./images/suitcase.png')} alt="hangman"/>
           <Card>
-            <div className='alert'>{this.state.alert}</div>
-            <TextField style={{margin:10}} name="name" ref="name" size="20" placeholder="Name" onChange={() => {this.clearAlert()}}></TextField>
-            <br />
-            <TextField style={{margin:10}} name="username" ref="username" size="20" placeholder="username" onChange={() => {this.clearAlert()}}></TextField>
-            <br />
-            <TextField style={{margin:10}} name="password" type="password" ref="password" size="20" placeholder="password" onChange={() => {this.clearAlert()}}></TextField>
-
+            <CardHeader title={'Please enter the following information to join'} />
+            <CardText>
+              <TextField style={{margin:10}} name="name" ref="name" size="20" placeholder="Name" onChange={() => {this.clearAlert()}}></TextField>
+              <br />
+              <TextField style={{margin:10}} name="username" ref="username" size="20" placeholder="username" onChange={() => {this.clearAlert()}}></TextField>
+              <br />
+              <TextField style={{margin:10}} name="password" type="password" ref="password" size="20" placeholder="password" onChange={() => {this.clearAlert()}}></TextField>
+              <div className='alert'>{this.state.alert}</div>
+            </CardText>
             <CardActions>
               <RaisedButton style={{margin: 10}} onClick={() => {this.signUp()}}>Join</RaisedButton>
             </CardActions>

@@ -25,11 +25,11 @@ import TableRow from 'material-ui/Table/TableRow'
 import TableRowColumn from 'material-ui/Table/TableRowColumn'
 
 import ExitToAppIcon from 'material-ui/svg-icons/action/exit-to-app';
-import VerifiedUserIcon from 'material-ui/svg-icons/action/verified-user';
 import CardTravelIcon from 'material-ui/svg-icons/action/card-travel';
 import MoreHorizIcon from 'material-ui/svg-icons/navigation/more-horiz';
 import SaveIcon from 'material-ui/svg-icons/content/save';
 import DeleteIcon from 'material-ui/svg-icons/action/delete';
+import ViewAgendaIcon from 'material-ui/svg-icons/action/view-agenda';
 
 
 const serverHost = 'http://'+ window.location.hostname +':10010';
@@ -69,6 +69,8 @@ export default class UserPanel extends Component {
           var isManager = false;
           if(responseJson.length === 1 && responseJson[0].role === 'admin' || responseJson[0].role === 'manager') {
             isManager = true;
+          } else if( responseJson.length > 1) {
+            isManager = true;
           }
           this.setState( {users: responseJson, isManager: isManager});
           this.clearInputs();
@@ -83,10 +85,9 @@ export default class UserPanel extends Component {
   }
 
   addUser() {
-    const name = this.refs.name.value;
-    const username = this.refs.username.value;
-    const password = this.refs.password.value;
-    const role = this.refs.role.value;
+    const name = this.refs.name.getValue();
+    const username = this.refs.username.getValue();
+    const password = this.refs.password.getValue();
 
     if(!name) {
       this.setState( {alert: 'Please enter a name'});
@@ -102,11 +103,6 @@ export default class UserPanel extends Component {
       return;
     }
 
-    if(!role) {
-      this.setState( {alert: 'Please enter a role'});
-      return;
-    }
-
     fetch(serverHost + '/users', {
       method: 'POST',
       credentials: 'include',
@@ -117,8 +113,7 @@ export default class UserPanel extends Component {
       body: JSON.stringify({
         name,
         username,
-        password,
-        role
+        password
       })
     })
       .then(ApiUtils.checkStatus)
@@ -134,6 +129,8 @@ export default class UserPanel extends Component {
       .catch((error) => {
         if(error.message === 'Unauthorized') {
           this.props.router.push('/');
+        } else if(error.message === 'Conflict') {
+          this.setState( {alert: 'Username is taken.  Please try another'});
         }
       });
   }
@@ -149,12 +146,8 @@ export default class UserPanel extends Component {
       return;
     }
 
-    if(!username) {
-      this.setState( {alert: 'Please enter a start date'});
-      return;
-    }
     if(!password) {
-      this.setState( {alert: 'Please enter an end date'});
+      this.setState( {alert: 'Please enter a password'});
       return;
     }
 
@@ -234,8 +227,8 @@ export default class UserPanel extends Component {
       });
   }
 
-  userpanel() {
-    this.props.router.push('/userpanel');
+  dashboard() {
+    this.props.router.push('/dashboard');
   }
 
   clearInputs() {
@@ -261,7 +254,7 @@ export default class UserPanel extends Component {
             <TextField name={user._id + 'name'} placeholder="Name" onChange={(err, value) => {this.clearAlert(); console.log(value); user.name =  value;}} value={user.name}></TextField>
           </TableRowColumn>
           <TableRowColumn>
-            <TextField name={user._id + 'username'} placeholder="username" onChange={(err, value) => {this.clearAlert(); user.username = value;}} value={user.username}></TextField>
+            <TextField name={user._id + 'username'} disabled={true} placeholder="username" onChange={(err, value) => {this.clearAlert(); user.username = value;}} value={user.username}></TextField>
           </TableRowColumn>
           <TableRowColumn>
             <TextField name={user._id + 'password'} placeholder="password" onChange={(err, value) => {this.clearAlert(); user.password = value;}} value={user.password}></TextField>
@@ -309,7 +302,7 @@ export default class UserPanel extends Component {
     return (
       <div className="page">
         <div className="container">
-          <AppBar title="Travel Planner: User Dashboard"
+          <AppBar title="Travel Planner: User Panel"
                   iconElementLeft={
                     <CardTravelIcon className="material-icon" style={{marginTop: 10, color: 'white'}}/>
                   }
@@ -321,11 +314,11 @@ export default class UserPanel extends Component {
                     >
                       <MenuItem
                         linkButton={true}
-                        onClick={() => this.logout()}>Log out <ExitToAppIcon className="material-icon" /></MenuItem>
-
+                        onClick={() => this.dashboard()}>Trip Dashboard <ViewAgendaIcon className="material-icon" /></MenuItem>
                       <MenuItem
                         linkButton={true}
-                        onClick={() => this.userpanel()}>User Settings <VerifiedUserIcon className="material-icon" /></MenuItem>
+                        onClick={() => this.logout()}>Log out <ExitToAppIcon className="material-icon" /></MenuItem>
+
                     </IconMenu>
                   }
           />
@@ -342,14 +335,13 @@ export default class UserPanel extends Component {
                     >Add User</RaisedButton>]}>
             <div className='alert'>{this.state.alert}</div>
 
-            <TextField type="text" ref="name" name="name" style={{margin:10}} size="20" placeholder="Name" onChange={() => {this.clearAlert()}}></TextField>
+            <TextField ref="name" name="name" placeholder="Name" onChange={() => {this.clearAlert();}}></TextField>
             <br />
-            <DatePicker ref="username" name="username" style={{margin:10}} autoOk={true} onChange={() => {this.clearAlert()}} defaultDate={(new Date)}></DatePicker>
+            <TextField ref="username" name="username" placeholder="username" onChange={() => {this.clearAlert();}}></TextField>
             <br />
-            <DatePicker ref="password" name="password" style={{margin:10}} autoOk={true} onChange={() => {this.clearAlert()}}  defaultDate={(new Date)}></DatePicker>
+            <TextField type="password" ref="password" name="password" placeholder="password" onChange={() => {this.clearAlert();}}></TextField>
             <br />
-            <TextField type="text" ref="role" name="role" style={{margin:10}} size="20" placeholder="Role" onChange={() => {this.clearAlert()}}></TextField>
-            <br />
+
           </Dialog>
 
           {users}

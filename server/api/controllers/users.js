@@ -54,7 +54,9 @@ function save(req, res, next) {
       }
       res.send(err);
     }else {
-      req.session.user = user.toJSON();
+      if(!req.session.user || !req.session.user.username ) {
+        req.session.user = user.toJSON();
+      }
       res.json(utils.obfuscate(user.toJSON()));
     }
   })
@@ -99,12 +101,11 @@ function updateOne(req, res, next) {
       res.send(err)
     }else if(user){
       user.name = name;
-      user.username = username;
+      user.username = userBeingEdited;
       user.password = password;
       if(req.user.role === 'admin' || req.user.role === 'manager' ) {
         user.role = role;
       }
-
       user.save(function (err) {
         if(err){
           if(err.code === 11000) {
@@ -113,13 +114,8 @@ function updateOne(req, res, next) {
             res.statusCode = 400;
           }
           res.send(err);
-        }else if(user){
-          req.session.user = user;
-
-          res.json(utils.obfuscate(user.toJSON()));
         } else {
-          res.statusCode = 400;
-          res.send();
+          res.json({});
         }
       })
     } else {
