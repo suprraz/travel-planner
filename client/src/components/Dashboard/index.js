@@ -8,7 +8,6 @@ import FlatButton from 'material-ui/FlatButton';
 import AppBar from 'material-ui/AppBar';
 import Card from 'material-ui/Card'
 import CardText from 'material-ui/Card/CardText'
-import CardActions from 'material-ui/Card/CardActions'
 import CardHeader from 'material-ui/Card/CardHeader'
 import TextField from 'material-ui/TextField'
 import IconMenu from 'material-ui/IconMenu'
@@ -22,6 +21,7 @@ import TableHeader from 'material-ui/Table/TableHeader'
 import TableHeaderColumn from 'material-ui/Table/TableHeaderColumn'
 import TableRow from 'material-ui/Table/TableRow'
 import TableRowColumn from 'material-ui/Table/TableRowColumn'
+import Toggle from 'material-ui/Toggle'
 
 import ExitToAppIcon from 'material-ui/svg-icons/action/exit-to-app';
 import VerifiedUserIcon from 'material-ui/svg-icons/action/verified-user';
@@ -41,7 +41,11 @@ export default class Dashboard extends Component {
       addTripDialogOpen: false,
       alert: '',
       editAlert: '',
-      trips: []
+      showNextMonthOnly: false,
+      trips: [],
+      filterEnabled: false,
+      filterDateStart: new Date(),
+      filterDateEnd: new Date()
     };
   }
 
@@ -252,9 +256,48 @@ export default class Dashboard extends Component {
 
   clearAlert() {
     this.setState( {alert: '', editAlert: ''});
+    this.forceUpdate();
+  }
+
+  isNextMonth(trip) {
+    var now = new Date();
+    var nextMonth = new Date(now.getFullYear(), now.getMonth()+1, 1);
+    var monthAfterNext = new Date(now.getFullYear(), now.getMonth()+2, 1);
+    const tripBeginning = new Date(trip.startDate);
+
+    return tripBeginning >= nextMonth && tripBeginning < monthAfterNext;
+  }
+
+  fitsCriteria(trip) {
+    const tripBeginning = new Date(trip.startDate);
+
+    return tripBeginning >= this.state.filterDateStart && tripBeginning < this.state.filterDateEnd;
+  }
+
+
+  daysUntilStart(trip) {
+    const tripBegins = Date.parse(trip.startDate);
+    const now = (new Date()).getTime();
+
+    return Math.floor((tripBegins-now)/(1000*60*60*24));
   }
 
   render() {
+
+    let filter = [
+      <Toggle label={'Filter Trips'} labelPosition={'right'} onToggle={(evt,value)=>{this.setState({filterEnabled: value, showNextMonthOnly: false})}} toggled={this.state.filterEnabled}/>
+    ]
+
+    if(this.state.filterEnabled)
+    {
+      filter.push(
+      <div>
+        <br />
+        From: <DatePicker name={'filter_startdate'} autoOk={true} onChange={(err, newDate) => { this.setState({filterDateStart: newDate}); }} value={this.state.filterDateStart}></DatePicker>
+        To: <DatePicker name={'filter_enddate'} autoOk={true} onChange={(err, newDate) => { this.setState({filterDateEnd: newDate}); ; }} minDate={new Date(this.state.filterDateStart)} value={this.state.filterDateEnd}></DatePicker>
+        <br />
+      </div>);
+    }
 
     let trips = <Card><CardHeader title={'Trips'}></CardHeader><CardText>No trips planned</CardText></Card>;
 
@@ -262,15 +305,24 @@ export default class Dashboard extends Component {
       let rows = []
       for(var i = 0; i < this.state.trips.length; i++) {
         const trip = this.state.trips[i];
+        if(this.state.showNextMonthOnly && !this.isNextMonth(trip)) {
+          continue;
+        }
+        if(this.state.filterEnabled && !this.fitsCriteria(trip)) {
+          continue;
+        }
         rows.push(<TableRow key={trip._id} selectable={false}>
+          <TableRowColumn>
+            {this.daysUntilStart(trip)}
+          </TableRowColumn>
           <TableRowColumn>
             <TextField name={trip._id + 'destination'} placeholder="Destination" onChange={(err, value) => {this.clearAlert(); trip.destination =  value;}} value={trip.destination}></TextField>
           </TableRowColumn>
           <TableRowColumn>
-            <DatePicker name={trip._id + 'startdate'} style={{margin:10}} autoOk={true} onChange={(err, newDate) => {this.clearAlert(); trip.startDate = newDate.toISOString();}} value={new Date(trip.startDate)}></DatePicker>
+            <DatePicker name={trip._id + 'startdate'} style={{margin:10}} autoOk={true} onChange={(err, newDate) => { trip.startDate = newDate.toISOString(); this.clearAlert();}} value={new Date(trip.startDate)}></DatePicker>
           </TableRowColumn>
           <TableRowColumn>
-            <DatePicker name={trip._id + 'enddate'} style={{margin:10}} autoOk={true} onChange={(err, newDate) => {this.clearAlert(); trip.endDate = newDate.toISOString();}} value={new Date(trip.endDate)}></DatePicker>
+            <DatePicker name={trip._id + 'enddate'} style={{margin:10}} autoOk={true} onChange={(err, newDate) => {trip.endDate = newDate.toISOString(); this.clearAlert();}} minDate={new Date(trip.startDate)} value={new Date(trip.endDate)}></DatePicker>
           </TableRowColumn>
           <TableRowColumn>
             <TextField name={trip._id + 'comment'} placeholder="Comment" onChange={(err, value) => {this.clearAlert(); trip.comment = value;}} value={trip.comment}></TextField>
@@ -283,21 +335,26 @@ export default class Dashboard extends Component {
       }
       trips = <Card>
         <CardHeader title={'Trips'}></CardHeader>
-        <div className='alert'>{this.state.editAlert}</div>
-        <Table>
-          <TableHeader displaySelectAll={false}>
-            <TableRow>
-              <TableHeaderColumn>Destination</TableHeaderColumn>
-              <TableHeaderColumn>Start Date</TableHeaderColumn>
-              <TableHeaderColumn>End Date</TableHeaderColumn>
-              <TableHeaderColumn>Comment</TableHeaderColumn>
-              <TableHeaderColumn>Trip Operations</TableHeaderColumn>
-            </TableRow>
-          </TableHeader>
-        <TableBody displayRowCheckbox={false}>
-          {rows}
-        </TableBody>
-      </Table>
+        <CardText>
+          <Toggle label={'Show trips next month only'} labelPosition={'right'} onToggle={(evt,value)=>{this.setState({showNextMonthOnly: value, filterEnabled: false});}} toggled={this.state.showNextMonthOnly}/>
+          {filter}
+          <div className='alert'>{this.state.editAlert}</div>
+          <Table>
+            <TableHeader displaySelectAll={false}>
+              <TableRow>
+                <TableHeaderColumn>Days Until Start</TableHeaderColumn>
+                <TableHeaderColumn>Destination</TableHeaderColumn>
+                <TableHeaderColumn>Start Date</TableHeaderColumn>
+                <TableHeaderColumn>End Date</TableHeaderColumn>
+                <TableHeaderColumn>Comment</TableHeaderColumn>
+                <TableHeaderColumn>Trip Operations</TableHeaderColumn>
+              </TableRow>
+            </TableHeader>
+            <TableBody displayRowCheckbox={false}>
+              {rows}
+            </TableBody>
+          </Table>
+        </CardText>
       </Card>
 
     }
