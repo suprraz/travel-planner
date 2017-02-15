@@ -8,13 +8,11 @@ import FlatButton from 'material-ui/FlatButton';
 import AppBar from 'material-ui/AppBar';
 import Card from 'material-ui/Card'
 import CardText from 'material-ui/Card/CardText'
-import CardActions from 'material-ui/Card/CardActions'
 import CardHeader from 'material-ui/Card/CardHeader'
 import TextField from 'material-ui/TextField'
 import IconMenu from 'material-ui/IconMenu'
 import IconButton from 'material-ui/IconButton'
 import MenuItem from 'material-ui/MenuItem'
-import DatePicker from 'material-ui/DatePicker'
 import Dialog from 'material-ui/Dialog'
 import SelectField from 'material-ui/SelectField'
 import Table from 'material-ui/Table'
@@ -67,7 +65,7 @@ export default class UserPanel extends Component {
           this.setState( {alert: responseJson.errmsg});
         } else {
           var isManager = false;
-          if(responseJson.length === 1 && responseJson[0].role === 'admin' || responseJson[0].role === 'manager') {
+          if(responseJson.length === 1 && (responseJson[0].role === 'admin' || responseJson[0].role === 'manager')) {
             isManager = true;
           } else if( responseJson.length > 1) {
             isManager = true;

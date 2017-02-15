@@ -279,24 +279,34 @@ export default class Dashboard extends Component {
     const tripBegins = Date.parse(trip.startDate);
     const now = (new Date()).getTime();
 
-    return Math.floor((tripBegins-now)/(1000*60*60*24));
+    const days = Math.floor((tripBegins-now)/(1000*60*60*24));
+
+    if(days < 0) {
+      return '-'
+    } else if (days === 0) {
+      return 'Within 24 hours'
+    } else if (days === 1) {
+      return 'Tomorrow'
+    } else {
+      return 'In ' + days + ' days';
+    }
   }
 
   render() {
 
-    let filter = [
+    let filter =
       <Toggle label={'Filter Trips'} labelPosition={'right'} onToggle={(evt,value)=>{this.setState({filterEnabled: value, showNextMonthOnly: false})}} toggled={this.state.filterEnabled}/>
-    ]
 
     if(this.state.filterEnabled)
     {
-      filter.push(
+      filter =
       <div>
+        {filter}
         <br />
         From: <DatePicker name={'filter_startdate'} autoOk={true} onChange={(err, newDate) => { this.setState({filterDateStart: newDate}); }} value={this.state.filterDateStart}></DatePicker>
         To: <DatePicker name={'filter_enddate'} autoOk={true} onChange={(err, newDate) => { this.setState({filterDateEnd: newDate}); ; }} minDate={new Date(this.state.filterDateStart)} value={this.state.filterDateEnd}></DatePicker>
         <br />
-      </div>);
+      </div>;
     }
 
     let trips = <Card><CardHeader title={'Trips'}></CardHeader><CardText>No trips planned</CardText></Card>;
@@ -345,7 +355,7 @@ export default class Dashboard extends Component {
           <Table>
             <TableHeader displaySelectAll={false}>
               <TableRow>
-                <TableHeaderColumn>Days Until Start</TableHeaderColumn>
+                <TableHeaderColumn>Trip Start</TableHeaderColumn>
                 <TableHeaderColumn>Destination</TableHeaderColumn>
                 <TableHeaderColumn>Start Date</TableHeaderColumn>
                 <TableHeaderColumn>End Date</TableHeaderColumn>
@@ -402,9 +412,9 @@ export default class Dashboard extends Component {
 
               <TextField type="text" ref="destination" name="destination" style={{margin:10}} size="20" placeholder="Destination" onChange={() => {this.clearAlert()}}></TextField>
               <br />
-              <DatePicker ref="startDate" name="startDate" style={{margin:10}} autoOk={true} onChange={() => {this.clearAlert()}} defaultDate={(new Date)}></DatePicker>
+              <DatePicker ref="startDate" name="startDate" style={{margin:10}} autoOk={true} onChange={() => {this.clearAlert()}} defaultDate={(new Date())}></DatePicker>
               <br />
-              <DatePicker ref="endDate" name="endDate" style={{margin:10}} autoOk={true} onChange={() => {this.clearAlert()}}  defaultDate={(new Date)}></DatePicker>
+              <DatePicker ref="endDate" name="endDate" style={{margin:10}} autoOk={true} onChange={() => {this.clearAlert()}}  defaultDate={(new Date())}></DatePicker>
               <br />
               <TextField type="text" ref="comment" name="comment" style={{margin:10}} size="20" placeholder="Comment" onChange={() => {this.clearAlert()}}></TextField>
               <br />
