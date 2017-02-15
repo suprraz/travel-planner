@@ -5,8 +5,11 @@ import ApiUtils from '../../ApiUtils'
 import RaisedButton from 'material-ui/RaisedButton';
 import AppBar from 'material-ui/AppBar';
 import Card from 'material-ui/Card'
+import CardHeader from 'material-ui/Card/CardHeader'
 import CardActions from 'material-ui/Card/CardActions'
+import CardText from 'material-ui/Card/CardText'
 import TextField from 'material-ui/TextField'
+import CardTravelIcon from 'material-ui/svg-icons/action/card-travel';
 
 const serverHost = 'http://'+ window.location.hostname +':10010';
 
@@ -76,14 +79,17 @@ export default class Login extends Component {
     return (
       <div className="page">
         <div className="container">
-          <AppBar title="Travel Planner">
+          <AppBar title="Travel Planner: Log In" iconElementLeft={
+            <CardTravelIcon className="material-icon" style={{marginTop: 10, color: 'white'}}/>
+          }>
           </AppBar>
-          <img className="logo" src={require('./images/suitcase.png')} alt="hangman"/>
           <Card>
-            <div className='alert'>{this.state.alert}</div>
+            <CardHeader title={'Please enter your username and password to log in'} />
+            <CardText>
             <TextField style={{margin:10}} ref="username" name="username" size="20" placeholder="username" onChange={() => {this.clearAlert()}}></TextField>
-            <br />
             <TextField style={{margin:10}} type="password" ref="password" name="password" size="20" placeholder="password" onChange={() => {this.clearAlert()}}></TextField>
+            <div className='alert'>{this.state.alert}</div>
+            </CardText>
             <CardActions>
               <RaisedButton style={{margin: 10}} onClick={() => {this.login()}}>Login</RaisedButton>
             </CardActions>

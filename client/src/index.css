@@ -9,3 +9,10 @@ input:-webkit-autofill:active {
   color: red;
   padding: 12px;
 }
+
+.material-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  vertical-align: middle;
+}

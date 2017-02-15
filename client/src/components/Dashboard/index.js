@@ -4,9 +4,10 @@ import 'whatwg-fetch'
 
 import ApiUtils from '../../ApiUtils'
 import RaisedButton from 'material-ui/RaisedButton';
-
+import FlatButton from 'material-ui/FlatButton';
 import AppBar from 'material-ui/AppBar';
 import Card from 'material-ui/Card'
+import CardText from 'material-ui/Card/CardText'
 import CardActions from 'material-ui/Card/CardActions'
 import CardHeader from 'material-ui/Card/CardHeader'
 import TextField from 'material-ui/TextField'
@@ -22,8 +23,12 @@ import TableHeaderColumn from 'material-ui/Table/TableHeaderColumn'
 import TableRow from 'material-ui/Table/TableRow'
 import TableRowColumn from 'material-ui/Table/TableRowColumn'
 
-import ExitToApp from 'material-ui/svg-icons/action/exit-to-app';
-import MoreHoriz from 'material-ui/svg-icons/navigation/more-horiz';
+import ExitToAppIcon from 'material-ui/svg-icons/action/exit-to-app';
+import VerifiedUserIcon from 'material-ui/svg-icons/action/verified-user';
+import CardTravelIcon from 'material-ui/svg-icons/action/card-travel';
+import MoreHorizIcon from 'material-ui/svg-icons/navigation/more-horiz';
+import SaveIcon from 'material-ui/svg-icons/content/save';
+import DeleteIcon from 'material-ui/svg-icons/action/delete';
 
 
 const serverHost = 'http://'+ window.location.hostname +':10010';
@@ -250,8 +255,7 @@ export default class Dashboard extends Component {
 
   render() {
 
-
-    let trips = <h5>No trips to show.</h5>;
+    let trips = <Card><CardHeader title={'Trips'}></CardHeader><CardText>No trips planned</CardText></Card>;
 
     if(this.state.trips && this.state.trips.length) {
       let rows = []
@@ -270,11 +274,15 @@ export default class Dashboard extends Component {
           <TableRowColumn>
             <TextField name={trip._id + 'comment'} placeholder="Comment" onChange={(err, value) => {this.clearAlert(); trip.comment = value;}} value={trip.comment}></TextField>
           </TableRowColumn>
-          <TableRowColumn><a href="#" name="#" style={{margin:10}} onClick={() => this.saveTrip(trip)}>save</a></TableRowColumn>
-          <TableRowColumn><a href="#" name="#" style={{margin:10}} onClick={() => this.deleteTrip(trip)}>delete</a></TableRowColumn>
+          <TableRowColumn>
+            <FlatButton onClick={() => this.saveTrip(trip)}>Save <SaveIcon className="material-icon" style={{color: '#00bcd4'}}/> </FlatButton>
+            <FlatButton onClick={() => this.deleteTrip(trip)}>Delete <DeleteIcon className="material-icon" style={{color: '#ff4081'}} /> </FlatButton>
+          </TableRowColumn>
         </TableRow>)
       }
-      trips = <div>        <div className='alert'>{this.state.editAlert}</div>
+      trips = <Card>
+        <CardHeader title={'Trips'}></CardHeader>
+        <div className='alert'>{this.state.editAlert}</div>
         <Table>
           <TableHeader displaySelectAll={false}>
             <TableRow>
@@ -282,15 +290,14 @@ export default class Dashboard extends Component {
               <TableHeaderColumn>Start Date</TableHeaderColumn>
               <TableHeaderColumn>End Date</TableHeaderColumn>
               <TableHeaderColumn>Comment</TableHeaderColumn>
-              <TableHeaderColumn></TableHeaderColumn>
-              <TableHeaderColumn></TableHeaderColumn>
+              <TableHeaderColumn>Trip Operations</TableHeaderColumn>
             </TableRow>
           </TableHeader>
         <TableBody displayRowCheckbox={false}>
           {rows}
         </TableBody>
       </Table>
-      </div>
+      </Card>
 
     }
 
@@ -299,22 +306,21 @@ export default class Dashboard extends Component {
         <div className="container">
           <AppBar title="Travel Planner: Trip Dashboard"
                   iconElementLeft={
-                    <img className="logo" style={{height:'2em', width: '2em', 'marginTop': '0.5em'}} src={require('./images/suitcase.png')} alt="hangman"/>
+                    <CardTravelIcon className="material-icon" style={{marginTop: 10, color: 'white'}}/>
                   }
                   iconElementRight={
                     <IconMenu
                       iconButtonElement={
-                        <IconButton><MoreHoriz /></IconButton>
+                        <IconButton><MoreHorizIcon /></IconButton>
                       }
                     >
                       <MenuItem
                         linkButton={true}
-                        onClick={() => this.logout()}>Log out</MenuItem>
+                        onClick={() => this.logout()}>Log out <ExitToAppIcon className="material-icon" /></MenuItem>
 
                       <MenuItem
                         linkButton={true}
-                        primaryText="User Settings"
-                        onClick={() => this.userpanel()}/>
+                        onClick={() => this.userpanel()}>User Settings <VerifiedUserIcon className="material-icon" /></MenuItem>
                     </IconMenu>
                   }
           />
@@ -328,8 +334,8 @@ export default class Dashboard extends Component {
 
           <Dialog title={'Add Trip'} open={this.state.addTripDialogOpen}
                   actions={[
-                    <RaisedButton onClick={() => this.setState({addTripDialogOpen:false})}>Cancel</RaisedButton>,
-                    <RaisedButton onClick={() => this.addTrip()}
+                    <RaisedButton style={{margin: 12}} onClick={() => this.setState({addTripDialogOpen:false})}>Cancel</RaisedButton>,
+                    <RaisedButton style={{margin: 12}} primary={true} onClick={() => this.addTrip()}
                     >Add Trip</RaisedButton>]}>
             <div className='alert'>{this.state.alert}</div>
 
@@ -343,9 +349,7 @@ export default class Dashboard extends Component {
               <br />
           </Dialog>
 
-
           {trips}
-
 
         </div>
       </div>

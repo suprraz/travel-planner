@@ -7,6 +7,7 @@ import AppBar from 'material-ui/AppBar';
 import Card from 'material-ui/Card'
 import CardActions from 'material-ui/Card/CardActions'
 import TextField from 'material-ui/TextField'
+import CardTravelIcon from 'material-ui/svg-icons/action/card-travel';
 
 const serverHost = 'http://'+ window.location.hostname +':10010';
 
@@ -72,7 +73,9 @@ export default class SignUp extends Component {
     return (
       <div className="page">
         <div className="container">
-          <AppBar title="Travel Planner">
+          <AppBar title="Travel Planner" iconElementLeft={
+            <CardTravelIcon className="material-icon" style={{marginTop: 10, color: 'white'}}/>
+          }>
           </AppBar>
           <img className="logo" src={require('./images/suitcase.png')} alt="hangman"/>
           <Card>
