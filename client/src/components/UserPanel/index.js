@@ -313,10 +313,8 @@ export default class UserPanel extends Component {
                       }
                     >
                       <MenuItem
-                        linkButton={true}
                         onClick={() => this.dashboard()}>Trip Dashboard <ViewAgendaIcon className="material-icon" /></MenuItem>
                       <MenuItem
-                        linkButton={true}
                         onClick={() => this.logout()}>Log out <ExitToAppIcon className="material-icon" /></MenuItem>
 
                     </IconMenu>
