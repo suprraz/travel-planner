@@ -189,6 +189,7 @@ paths:
 
     delete:
       summary: Deletes a user
+      operationId: deleteOne
       description: >
         Users can only delete their own account, not other users'.  Except for the "admin" user, who can delete anyone.
       parameters:

@@ -53,7 +53,13 @@ function save(req, res, next) {
 function getOne(req, res, next) {
   var tripBeingEdited = req.swagger.params.tripId.value;
 
-  Trip.findOne({_id: tripBeingEdited}, function(err, trip){
+  var query = {_id: tripBeingEdited, owner: req.user.username}
+
+  if(req.user.role === 'admin' ){
+    query = {_id: tripBeingEdited}
+  }
+
+  Trip.findOne(query, function(err, trip){
     if(err){
       console.log(err);
       res.statusCode = 500;

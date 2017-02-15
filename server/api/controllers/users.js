@@ -3,8 +3,7 @@
 var User = require('../../models/user');
 var utils = require('../helpers/utils')();
 
-// Exports all the functions to perform on the db
-module.exports = {getAll, save, getOne, login, logout, updateOne};
+module.exports = {getAll, save, getOne, login, logout, updateOne, deleteOne};
 
 //GET /users operationId
 function getAll(req, res, next) {
@@ -24,8 +23,6 @@ function getAll(req, res, next) {
   })
 }
 
-
-//POST /game operationId
 function save(req, res, next) {
   var name = req.swagger.params.body.value.name;
   var username = req.swagger.params.body.value.username;
@@ -62,9 +59,12 @@ function save(req, res, next) {
   })
 }
 
-//GET /users operationId
 function getOne(req, res, next) {
   var userBeingEdited = req.swagger.params.username.value;
+
+  if( req.user.username !== userBeingEdited && (req.user.role !== 'admin' && req.user.role !== 'manager') ){
+    return res.status(401).send('You can only view your own profile');
+  }
 
   User.findOne({username: userBeingEdited}, function(err, user){
     if(err){
@@ -92,12 +92,14 @@ function updateOne(req, res, next) {
 
   if(req.user.role === 'admin' || req.user.role === 'manager' ) {
     updatedUserData.role = role;
+  } else if (userBeingEdited !== req.user.username) {
+    return res.status(401).send('You can only change your own profile');
   }
 
   User.findOne({username: userBeingEdited}, function(err, user){
     if(err){
       console.log(err);
-      res.statusCode = 500;
+      res.statusCode = 400;
       res.send(err)
     }else if(user){
       user.name = name;
@@ -125,6 +127,31 @@ function updateOne(req, res, next) {
   });
 }
 
+
+function deleteOne(req, res, next) {
+  var userBeingEdited = req.swagger.params.username.value;
+  var query = {username: userBeingEdited};
+
+  if( req.user.username !== userBeingEdited && (req.user.role !== 'admin' && req.user.role !== 'manager') ){
+    return res.status(401).send('You can only delete your own profile');
+  }
+
+  User.remove(query, function(err) {
+    if(err){
+      console.log(err);
+      res.statusCode = 500;
+      res.send(err)
+    } else {
+      if( req.user.username === userBeingEdited )
+      {
+        req.session.destroy();
+      }
+      res.statusCode = 204;
+      res.end();
+    }
+  });
+}
+
 function login(req, res, next) {
   var username = req.swagger.params.body.value.username;
   var password = req.swagger.params.body.value.password;
@@ -141,6 +168,7 @@ function login(req, res, next) {
     }
   });
 }
+
 function logout(req, res, next) {
   req.session.destroy();
   res.statusCode = 204;

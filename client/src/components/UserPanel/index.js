@@ -242,14 +242,14 @@ export default class UserPanel extends Component {
 
   render() {
 
-    let users = <Card><CardHeader title={this.state.isManager ? 'Users' : 'My Settings'}></CardHeader><CardText>No users planned</CardText></Card>;
+    let users = <Card><CardHeader title={this.state.isManager ? 'Users' : 'My Settings'}></CardHeader><CardText>No users</CardText></Card>;
     if(this.state.users && this.state.users.length) {
       let rows = [];
       for(var i = 0; i < this.state.users.length; i++) {
         const user = this.state.users[i];
         rows.push(<TableRow key={user._id} selectable={false}>
           <TableRowColumn>
-            <TextField name={user._id + 'name'} placeholder="Name" onChange={(err, value) => {this.clearAlert(); console.log(value); user.name =  value;}} value={user.name}></TextField>
+            <TextField name={user._id + 'name'} placeholder="Name" onChange={(err, value) => {this.clearAlert(); user.name =  value;}} value={user.name}></TextField>
           </TableRowColumn>
           <TableRowColumn>
             <TextField name={user._id + 'username'} disabled={true} placeholder="username" onChange={(err, value) => {this.clearAlert(); user.username = value;}} value={user.username}></TextField>
