@@ -7,7 +7,7 @@ module.exports = {getAllTrips: getAll, saveTrip: save, getOneTrip: getOne, delet
 function getAll(req, res, next) {
   var query = {owner: req.user.username};
 
-  if(req.user.role === 'admin' || req.user.role === 'manager' ){
+  if(req.user.role === 'admin' ){
     query = {}
   }
 
@@ -75,21 +75,47 @@ function updateOne(req, res, next) {
   var endDate = req.swagger.params.body.value.endDate;
   var comment = req.swagger.params.body.value.comment;
 
-  Trip.findByIdAndUpdate(tripBeingEdited, { $set: { destination, startDate, endDate, comment }}, { new: true }, function (err, trip) {
+  var query = {_id: tripBeingEdited, owner: req.user.username}
+
+  if(req.user.role === 'admin' ){
+    query = {_id: tripBeingEdited}
+  }
+
+  Trip.findOne(query, function(err, trip){
     if(err){
       console.log(err);
-      res.statusCode = 500;
+      res.statusCode = 400;
       res.send(err)
+    }else if(trip){
+      trip.destination = destination;
+      trip.startDate = startDate;
+      trip.endDate = endDate;
+      trip.comment = comment;
+
+      trip.save(function (err) {
+        if(err){
+          res.statusCode = 400;
+          res.send(err);
+        } else {
+          res.json({});
+        }
+      })
     } else {
-      res.json(trip.toJSON());
+      res.statusCode = 404;
+      res.send();
     }
   });
 }
 
 function deleteOne(req, res, next) {
   var tripBeingEdited = req.swagger.params.tripId.value;
+  var query = {_id: tripBeingEdited, owner: req.user.username}
 
-  Trip.remove({ _id: tripBeingEdited }, function(err) {
+  if(req.user.role === 'admin' ){
+    query = {_id: tripBeingEdited}
+  }
+
+  Trip.remove(query, function(err) {
     if(err){
       console.log(err);
       res.statusCode = 500;

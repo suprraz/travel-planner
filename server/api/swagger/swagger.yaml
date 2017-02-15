@@ -57,7 +57,6 @@ definitions:
         type: string
         minLength: 1
         maxLength: 20
-        pattern: "^\\w+$"   # only allows alphanumeric characters
         description: name of the destination
       startDate:
         type: string
