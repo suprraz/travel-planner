@@ -328,6 +328,9 @@ export default class Dashboard extends Component {
             <TextField name={trip._id + 'comment'} placeholder="Comment" onChange={(err, value) => {this.clearAlert(); trip.comment = value;}} value={trip.comment}></TextField>
           </TableRowColumn>
           <TableRowColumn>
+            {trip.owner}
+          </TableRowColumn>
+          <TableRowColumn>
             <FlatButton onClick={() => this.saveTrip(trip)}>Save <SaveIcon className="material-icon" style={{color: '#00bcd4'}}/> </FlatButton>
             <FlatButton onClick={() => this.deleteTrip(trip)}>Delete <DeleteIcon className="material-icon" style={{color: '#ff4081'}} /> </FlatButton>
           </TableRowColumn>
@@ -347,6 +350,7 @@ export default class Dashboard extends Component {
                 <TableHeaderColumn>Start Date</TableHeaderColumn>
                 <TableHeaderColumn>End Date</TableHeaderColumn>
                 <TableHeaderColumn>Comment</TableHeaderColumn>
+                <TableHeaderColumn>Traveler</TableHeaderColumn>
                 <TableHeaderColumn>Trip Operations</TableHeaderColumn>
               </TableRow>
             </TableHeader>
