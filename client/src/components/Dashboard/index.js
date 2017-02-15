@@ -40,7 +40,8 @@ export default class Dashboard extends Component {
     this.state = {
       addTripDialogOpen: false,
       alert: '',
-      editAlert: ''
+      editAlert: '',
+      trips: []
     };
   }
 
@@ -266,10 +267,10 @@ export default class Dashboard extends Component {
             <TextField name={trip._id + 'destination'} placeholder="Destination" onChange={(err, value) => {this.clearAlert(); console.log(value); trip.destination =  value;}} value={trip.destination}></TextField>
           </TableRowColumn>
           <TableRowColumn>
-            <DatePicker ref="startDate" name={trip._id + 'startdate'} style={{margin:10}} autoOk={true} onChange={(err, newDate) => {this.clearAlert(); trip.startDate = newDate.toISOString();}} value={new Date(trip.startDate)}></DatePicker>
+            <DatePicker name={trip._id + 'startdate'} style={{margin:10}} autoOk={true} onChange={(err, newDate) => {this.clearAlert(); trip.startDate = newDate.toISOString();}} value={new Date(trip.startDate)}></DatePicker>
           </TableRowColumn>
           <TableRowColumn>
-            <DatePicker ref="endDate" name={trip._id + 'enddate'} style={{margin:10}} autoOk={true} onChange={(err, newDate) => {this.clearAlert(); trip.endDate = newDate.toISOString();}} value={new Date(trip.endDate)}></DatePicker>
+            <DatePicker name={trip._id + 'enddate'} style={{margin:10}} autoOk={true} onChange={(err, newDate) => {this.clearAlert(); trip.endDate = newDate.toISOString();}} value={new Date(trip.endDate)}></DatePicker>
           </TableRowColumn>
           <TableRowColumn>
             <TextField name={trip._id + 'comment'} placeholder="Comment" onChange={(err, value) => {this.clearAlert(); trip.comment = value;}} value={trip.comment}></TextField>

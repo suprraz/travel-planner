@@ -81,7 +81,6 @@ function updateOne(req, res, next) {
       res.statusCode = 500;
       res.send(err)
     } else {
-      res.statusCode = 204;
       res.json(trip.toJSON());
     }
   });

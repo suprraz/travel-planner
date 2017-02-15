@@ -3,6 +3,33 @@ import React, { Component } from 'react';
 import 'whatwg-fetch'
 
 import ApiUtils from '../../ApiUtils'
+import RaisedButton from 'material-ui/RaisedButton';
+import FlatButton from 'material-ui/FlatButton';
+import AppBar from 'material-ui/AppBar';
+import Card from 'material-ui/Card'
+import CardText from 'material-ui/Card/CardText'
+import CardActions from 'material-ui/Card/CardActions'
+import CardHeader from 'material-ui/Card/CardHeader'
+import TextField from 'material-ui/TextField'
+import IconMenu from 'material-ui/IconMenu'
+import IconButton from 'material-ui/IconButton'
+import MenuItem from 'material-ui/MenuItem'
+import DatePicker from 'material-ui/DatePicker'
+import Dialog from 'material-ui/Dialog'
+import SelectField from 'material-ui/SelectField'
+import Table from 'material-ui/Table'
+import TableBody from 'material-ui/Table/TableBody'
+import TableHeader from 'material-ui/Table/TableHeader'
+import TableHeaderColumn from 'material-ui/Table/TableHeaderColumn'
+import TableRow from 'material-ui/Table/TableRow'
+import TableRowColumn from 'material-ui/Table/TableRowColumn'
+
+import ExitToAppIcon from 'material-ui/svg-icons/action/exit-to-app';
+import VerifiedUserIcon from 'material-ui/svg-icons/action/verified-user';
+import CardTravelIcon from 'material-ui/svg-icons/action/card-travel';
+import MoreHorizIcon from 'material-ui/svg-icons/navigation/more-horiz';
+import SaveIcon from 'material-ui/svg-icons/content/save';
+import DeleteIcon from 'material-ui/svg-icons/action/delete';
 
 
 const serverHost = 'http://'+ window.location.hostname +':10010';
@@ -12,7 +39,11 @@ export default class UserPanel extends Component {
     super(props);
 
     this.state = {
-      alert: ''
+      addUserDialogOpen: false,
+      alert: '',
+      editAlert: '',
+      isManager: false,
+      users: []
     };
   }
 
@@ -22,23 +53,27 @@ export default class UserPanel extends Component {
 
   getUsers() {
       fetch(serverHost + '/users', {
-        method: 'GET',
-        credentials: 'include',
-        headers: {
-              'Accept': 'application/json',
-              'Content-Type': 'application/json',
-        }
-      })
+      method: 'GET',
+      credentials: 'include',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      }
+    })
       .then(ApiUtils.checkStatus)
       .then((response) => response.json())
       .then((responseJson) => {
-          if(responseJson.errmsg) {
-              this.setState( {alert: responseJson.errmsg});
-          } else {
-              this.setState( {users: responseJson});
-              this.clearInputs();
-              this.forceUpdate();
+        if(responseJson.errmsg) {
+          this.setState( {alert: responseJson.errmsg});
+        } else {
+          var isManager = false;
+          if(responseJson.length === 1 && responseJson[0].role === 'admin' || responseJson[0].role === 'manager') {
+            isManager = true;
           }
+          this.setState( {users: responseJson, isManager: isManager});
+          this.clearInputs();
+          this.forceUpdate();
+        }
       })
       .catch((error) => {
         if(error.message === 'Unauthorized') {
@@ -86,20 +121,21 @@ export default class UserPanel extends Component {
         role
       })
     })
-    .then(ApiUtils.checkStatus)
-    .then((response) => response.json())
-    .then((responseJson) => {
-      if(responseJson.errmsg) {
-        this.setState( {alert: responseJson.errmsg});
-      } else {
-        this.getUsers()
-      }
-    })
-    .catch((error) => {
-      if(error.message === 'Unauthorized') {
-        this.props.router.push('/');
-      }
-    });
+      .then(ApiUtils.checkStatus)
+      .then((response) => response.json())
+      .then((responseJson) => {
+        if(responseJson.errmsg) {
+          this.setState( {alert: responseJson.errmsg});
+        } else {
+          this.setState({addUserDialogOpen:false});
+          this.getUsers()
+        }
+      })
+      .catch((error) => {
+        if(error.message === 'Unauthorized') {
+          this.props.router.push('/');
+        }
+      });
   }
 
   saveUser(user) {
@@ -145,7 +181,7 @@ export default class UserPanel extends Component {
       .then((response) => response.json())
       .then((responseJson) => {
         if(responseJson.errmsg) {
-          this.setState( {alert: responseJson.errmsg});
+          this.setState( {editAlert: responseJson.errmsg});
         } else {
           this.getUsers()
         }
@@ -154,7 +190,7 @@ export default class UserPanel extends Component {
         if(error.message === 'Unauthorized') {
           this.props.router.push('/');
         } else {
-          this.setState( {alert: error.message});
+          this.setState( {editAlert: error.message});
         }
       });
   }
@@ -198,8 +234,8 @@ export default class UserPanel extends Component {
       });
   }
 
-  dashboard() {
-    this.props.router.push('/dashboard');
+  userpanel() {
+    this.props.router.push('/userpanel');
   }
 
   clearInputs() {
@@ -210,77 +246,114 @@ export default class UserPanel extends Component {
   }
 
   clearAlert() {
-    this.setState( {alert: ''});
+    this.setState( {alert: '', editAlert: ''});
   }
 
   render() {
 
-
-    let users = <h5>No users to show.</h5>;
-
+    let users = <Card><CardHeader title={this.state.isManager ? 'Users' : 'My Settings'}></CardHeader><CardText>No users planned</CardText></Card>;
     if(this.state.users && this.state.users.length) {
-      let rows = []
+      let rows = [];
       for(var i = 0; i < this.state.users.length; i++) {
         const user = this.state.users[i];
-        rows.push(<tr key={user.username}>
-          <td>
-            <input type="text" size="20" placeholder="Name" onChange={(event) => {this.clearAlert(); user.name = event.target.value;}} value={user.name}></input>
-          </td>
-          <td>
-            <input type="text" size="20" placeholder="username" onChange={(event) => {this.clearAlert(); user.username = event.target.value;}} value={user.username}></input>
-          </td>
-          <td>
-            <input type="text" size="20" placeholder="password" onChange={(event) => {this.clearAlert(); user.password = event.target.value;}} value={user.password}></input>
-          </td>
-          <td>
-            <input type="text" size="20" placeholder="role" onChange={(event) => {this.clearAlert(); user.role = event.target.value;}} value={user.role}></input>
-          </td>
-          <td><a href="#" onClick={() => this.saveUser(user)}>save</a></td>
-          <td><a href="#" onClick={() => this.deleteUser(user)}>delete</a></td>
-        </tr>)
+        rows.push(<TableRow key={user._id} selectable={false}>
+          <TableRowColumn>
+            <TextField name={user._id + 'name'} placeholder="Name" onChange={(err, value) => {this.clearAlert(); console.log(value); user.name =  value;}} value={user.name}></TextField>
+          </TableRowColumn>
+          <TableRowColumn>
+            <TextField name={user._id + 'username'} placeholder="username" onChange={(err, value) => {this.clearAlert(); user.username = value;}} value={user.username}></TextField>
+          </TableRowColumn>
+          <TableRowColumn>
+            <TextField name={user._id + 'password'} placeholder="password" onChange={(err, value) => {this.clearAlert(); user.password = value;}} value={user.password}></TextField>
+          </TableRowColumn>
+          <TableRowColumn>
+            <SelectField name={user._id + 'role'} disabled={!this.state.isManager} onChange={(err, index, value) => {this.clearAlert(); user.role = value;}} value={user.role}>
+              <MenuItem value={'admin'} primaryText={'Administrator'}/>
+              <MenuItem value={'manager'} primaryText={'Manager'}/>
+              <MenuItem value={'user'} primaryText={'User'}/>
+            </SelectField>
+          </TableRowColumn>
+          <TableRowColumn>
+            <FlatButton onClick={() => this.saveUser(user)}>Save <SaveIcon className="material-icon" style={{color: '#00bcd4'}}/> </FlatButton>
+            <FlatButton onClick={() => this.deleteUser(user)}>Delete <DeleteIcon className="material-icon" style={{color: '#ff4081'}} /> </FlatButton>
+          </TableRowColumn>
+        </TableRow>)
       }
-      users = <table>
-        <tbody>
-          {rows}
-        </tbody>
-      </table>
+      users = <Card>
+        <CardHeader title={this.state.isManager ? 'Users' : 'Profile Settings'}></CardHeader>
+        <div className='alert'>{this.state.editAlert}</div>
+        <Table>
+          <TableHeader displaySelectAll={false}>
+            <TableRow>
+              <TableHeaderColumn>Name</TableHeaderColumn>
+              <TableHeaderColumn>Username</TableHeaderColumn>
+              <TableHeaderColumn>Password</TableHeaderColumn>
+              <TableHeaderColumn>Role</TableHeaderColumn>
+              <TableHeaderColumn>User Operations</TableHeaderColumn>
+            </TableRow>
+          </TableHeader>
+          <TableBody displayRowCheckbox={false}>
+            {rows}
+          </TableBody>
+        </Table>
+      </Card>
 
     }
 
-    const addUser = <div>
+    let addUserButton = null;
+    if(this.state.isManager) {
+      addUserButton = <RaisedButton onClick={()=>{this.setState({addUserDialogOpen:true})}}>Add User</RaisedButton>
+    }
 
-      <h3>Add a user:</h3>
-      <h3>
-        <input type="text" ref="name" size="20" placeholder="Name" onChange={() => {this.clearAlert()}}></input>
-      </h3>
-      <h3>
-        <input type="text" ref="username" size="20" placeholder="Start Date" onChange={() => {this.clearAlert()}} value={(new Date).toISOString()}></input>
-      </h3>
-      <h3>
-        <input type="text" ref="password" size="20" placeholder="End Date" onChange={() => {this.clearAlert()}} value={(new Date).toISOString()}></input>
-      </h3>
-      <h3>
-        <input type="text" ref="role" size="20" placeholder="Role" onChange={() => {this.clearAlert()}}></input>
-      </h3>
-
-      <button onClick={() => this.addUser()}>Add User</button>
-    </div>
 
     return (
       <div className="page">
         <div className="container">
-          <div className="logout" >
-            <a href="#" onClick={() => this.dashboard()}>Dashboard</a>
-            &nbsp;|&nbsp;
-            <a href="#" onClick={() => this.logout()}>Log out</a>
-          </div>
+          <AppBar title="Travel Planner: User Dashboard"
+                  iconElementLeft={
+                    <CardTravelIcon className="material-icon" style={{marginTop: 10, color: 'white'}}/>
+                  }
+                  iconElementRight={
+                    <IconMenu
+                      iconButtonElement={
+                        <IconButton><MoreHorizIcon /></IconButton>
+                      }
+                    >
+                      <MenuItem
+                        linkButton={true}
+                        onClick={() => this.logout()}>Log out <ExitToAppIcon className="material-icon" /></MenuItem>
 
-          <h1 className="page_title">User Panel</h1>
-          <img className="logo_small" src={require('./images/suitcase.png')} alt="suitcase"/>
-          <h3 className='alert'>{this.state.alert}</h3>
+                      <MenuItem
+                        linkButton={true}
+                        onClick={() => this.userpanel()}>User Settings <VerifiedUserIcon className="material-icon" /></MenuItem>
+                    </IconMenu>
+                  }
+          />
+
+          <br />
+          {addUserButton}
+          <br />
+          <br />
+
+          <Dialog title={'Add User'} open={this.state.addUserDialogOpen}
+                  actions={[
+                    <RaisedButton style={{margin: 12}} onClick={() => this.setState({addUserDialogOpen:false})}>Cancel</RaisedButton>,
+                    <RaisedButton style={{margin: 12}} primary={true} onClick={() => this.addUser()}
+                    >Add User</RaisedButton>]}>
+            <div className='alert'>{this.state.alert}</div>
+
+            <TextField type="text" ref="name" name="name" style={{margin:10}} size="20" placeholder="Name" onChange={() => {this.clearAlert()}}></TextField>
+            <br />
+            <DatePicker ref="username" name="username" style={{margin:10}} autoOk={true} onChange={() => {this.clearAlert()}} defaultDate={(new Date)}></DatePicker>
+            <br />
+            <DatePicker ref="password" name="password" style={{margin:10}} autoOk={true} onChange={() => {this.clearAlert()}}  defaultDate={(new Date)}></DatePicker>
+            <br />
+            <TextField type="text" ref="role" name="role" style={{margin:10}} size="20" placeholder="Role" onChange={() => {this.clearAlert()}}></TextField>
+            <br />
+          </Dialog>
 
           {users}
-          {addUser}
+
         </div>
       </div>
     );
