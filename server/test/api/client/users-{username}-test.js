@@ -86,11 +86,11 @@ describe('/users/{username}', function() {
 
       /*eslint-enable*/
       request({
-        url: 'http://localhost:10010/users/{username PARAM GOES HERE}',
+        url: 'http://localhost:10010/users/unit_user',
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
-          'Cookie': 'DATA GOES HERE'
+          'Cookie': 'username=unit_user;'
         }
       },
       function(error, res, body) {
@@ -105,11 +105,11 @@ describe('/users/{username}', function() {
 
     it('should respond with 401 You do not have access to...', function(done) {
       request({
-        url: 'http://localhost:10010/users/{username PARAM GOES HERE}',
+        url: 'http://localhost:10010/users/unit_admin',
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
-          'Cookie': 'DATA GOES HERE'
+          'Cookie': 'username=unit_user;'
         }
       },
       function(error, res, body) {
@@ -117,26 +117,26 @@ describe('/users/{username}', function() {
 
         expect(res.statusCode).to.equal(401);
 
-        expect(body).to.equal(null); // non-json response or no schema
+        expect(body).to.equal('You can only view your own profile'); // non-json response or no schema
         done();
       });
     });
 
-    it('should respond with 404 The {username} was not...', function(done) {
+    it('should respond with 401 The {username} was not...', function(done) {
       request({
-        url: 'http://localhost:10010/users/{username PARAM GOES HERE}',
+        url: 'http://localhost:10010/users/non_existent',
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
-          'Cookie': 'DATA GOES HERE'
+          'Cookie': 'username=unit_user;'
         }
       },
       function(error, res, body) {
         if (error) return done(error);
 
-        expect(res.statusCode).to.equal(404);
+        expect(res.statusCode).to.equal(401);
 
-        expect(body).to.equal(null); // non-json response or no schema
+        expect(body).to.equal('You can only view your own profile'); // non-json response or no schema
         done();
       });
     });
@@ -144,60 +144,6 @@ describe('/users/{username}', function() {
   });
 
   describe('post', function() {
-    it('should respond with 200 User data was saved...', function(done) {
-      /*eslint-disable*/
-      var schema = {
-        "description": "a registered user",
-        "required": [
-          "username",
-          "name"
-        ],
-        "properties": {
-          "username": {
-            "type": "string",
-            "minLength": 4,
-            "maxLength": 20,
-            "pattern": "^\\w+$",
-            "description": "username must be unique"
-          },
-          "password": {
-            "type": "string",
-            "minLength": 4,
-            "description": "a super-secure, four-character password :)"
-          },
-          "name": {
-            "type": "string",
-            "minLength": 1,
-            "description": "the users real name"
-          }
-        },
-        "example": {
-          "username": "jdoe",
-          "name": "John Doe"
-        }
-      };
-
-      /*eslint-enable*/
-      request({
-        url: 'http://localhost:10010/users/{username PARAM GOES HERE}',
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Cookie': 'DATA GOES HERE'
-        },
-        json: {
-          body: 'DATA GOES HERE'
-        }
-      },
-      function(error, res, body) {
-        if (error) return done(error);
-
-        expect(res.statusCode).to.equal(200);
-
-        expect(validator.validate(body, schema)).to.be.true;
-        done();
-      });
-    });
 
     it('should respond with 400 Bad JSON formatting in the...', function(done) {
       request({
@@ -205,7 +151,7 @@ describe('/users/{username}', function() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Cookie': 'DATA GOES HERE'
+          'Cookie': 'username=unit_user;'
         },
         json: {
           body: 'DATA GOES HERE'
@@ -216,76 +162,14 @@ describe('/users/{username}', function() {
 
         expect(res.statusCode).to.equal(400);
 
-        expect(body).to.equal(null); // non-json response or no schema
         done();
       });
     });
 
-    it('should respond with 401 You do not have access to...', function(done) {
-      request({
-        url: 'http://localhost:10010/users/{username PARAM GOES HERE}',
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Cookie': 'DATA GOES HERE'
-        },
-        json: {
-          body: 'DATA GOES HERE'
-        }
-      },
-      function(error, res, body) {
-        if (error) return done(error);
-
-        expect(res.statusCode).to.equal(401);
-
-        expect(body).to.equal(null); // non-json response or no schema
-        done();
-      });
-    });
-
-    it('should respond with 404 The {username} was not...', function(done) {
-      request({
-        url: 'http://localhost:10010/users/{username PARAM GOES HERE}',
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Cookie': 'DATA GOES HERE'
-        },
-        json: {
-          body: 'DATA GOES HERE'
-        }
-      },
-      function(error, res, body) {
-        if (error) return done(error);
-
-        expect(res.statusCode).to.equal(404);
-
-        expect(body).to.equal(null); // non-json response or no schema
-        done();
-      });
-    });
 
   });
 
   describe('delete', function() {
-    it('should respond with 204 User account was deleted', function(done) {
-      request({
-        url: 'http://localhost:10010/users/{username PARAM GOES HERE}',
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-          'Cookie': 'DATA GOES HERE'
-        }
-      },
-      function(error, res, body) {
-        if (error) return done(error);
-
-        expect(res.statusCode).to.equal(204);
-
-        expect(body).to.equal(null); // non-json response or no schema
-        done();
-      });
-    });
 
     it('should respond with 401 You do not have access to...', function(done) {
       request({
@@ -301,26 +185,26 @@ describe('/users/{username}', function() {
 
         expect(res.statusCode).to.equal(401);
 
-        expect(body).to.equal(null); // non-json response or no schema
+        expect(body).to.equal('You must be logged in to do that.'); // non-json response or no schema
         done();
       });
     });
 
-    it('should respond with 404 The {username} was not...', function(done) {
+    it('should respond with 401 The {username} was not...', function(done) {
       request({
-        url: 'http://localhost:10010/users/{username PARAM GOES HERE}',
+        url: 'http://localhost:10010/users/non_existent',
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
-          'Cookie': 'DATA GOES HERE'
+          'Cookie': 'username=unit_user;'
         }
       },
       function(error, res, body) {
         if (error) return done(error);
 
-        expect(res.statusCode).to.equal(404);
+        expect(res.statusCode).to.equal(401);
 
-        expect(body).to.equal(null); // non-json response or no schema
+        expect(body).to.equal('You can only delete your own profile'); // non-json response or no schema
         done();
       });
     });

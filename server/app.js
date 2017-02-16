@@ -6,14 +6,13 @@ var mongoose = require('mongoose');
 var cookieParser = require('cookie-parser');
 var session = require('express-session');
 
+var dbOptions = { promiseLibrary: require('bluebird') };
+global.db = (global.db ? global.db : mongoose.createConnection('mongodb://localhost/travel_planner', dbOptions));
+
 var authentication = require('./middleware/authentication');
 var authorization = require('./middleware/authorization');
 var cors = require('./middleware/cors');
-
-var dbOptions = { promiseLibrary: require('bluebird') };
 cors.setHeaders(app);
-
-global.db = (global.db ? global.db : mongoose.createConnection('mongodb://localhost/travel_planner', dbOptions));
 
 module.exports = app; // for testing
 app.use(cookieParser());

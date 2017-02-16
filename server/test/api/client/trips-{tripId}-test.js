@@ -53,26 +53,24 @@ describe('/trips/{tripId}', function() {
   describe('get', function() {
     it('should respond with 200 Returns the trips data', function(done) {
       request({
-        url: 'http://localhost:10010/trips/{tripId PARAM GOES HERE}',
+        url: 'http://localhost:10010/trips/58a5dcdbcf7f7905bcb9e4f3',
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
-          'Cookie': 'DATA GOES HERE'
+          'Cookie': 'username=unit_user;'
         }
       },
       function(error, res, body) {
         if (error) return done(error);
 
         expect(res.statusCode).to.equal(200);
-
-        expect(body).to.equal(null); // non-json response or no schema
         done();
       });
     });
 
     it('should respond with 401 You do not have access to...', function(done) {
       request({
-        url: 'http://localhost:10010/trips/{tripId PARAM GOES HERE}',
+        url: 'http://localhost:10010/trips/58a5dcdbcf7f7905bcb9e4f3',
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -84,18 +82,18 @@ describe('/trips/{tripId}', function() {
 
         expect(res.statusCode).to.equal(401);
 
-        expect(body).to.equal(null); // non-json response or no schema
+        expect(body).to.equal('You must be logged in to do that.'); // non-json response or no schema
         done();
       });
     });
 
     it('should respond with 404 The {tripId} was not found', function(done) {
       request({
-        url: 'http://localhost:10010/trips/{tripId PARAM GOES HERE}',
+        url: 'http://localhost:10010/trips/58a5dcdbcf7f7905bcb9f790',
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
-          'Cookie': 'DATA GOES HERE'
+          'Cookie': 'username=unit_user;'
         }
       },
       function(error, res, body) {
@@ -103,7 +101,7 @@ describe('/trips/{tripId}', function() {
 
         expect(res.statusCode).to.equal(404);
 
-        expect(body).to.equal(null); // non-json response or no schema
+        expect(body).to.equal(''); // non-json response or no schema
         done();
       });
     });
@@ -111,70 +109,13 @@ describe('/trips/{tripId}', function() {
   });
 
   describe('post', function() {
-    it('should respond with 200 Trip data was saved...', function(done) {
-      /*eslint-disable*/
-      var schema = {
-        "description": "a registered trip",
-        "required": [
-          "destination",
-          "startDate",
-          "endDate"
-        ],
-        "properties": {
-          "destination": {
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 20,
-            "description": "name of the destination"
-          },
-          "startDate": {
-            "type": "string",
-            "format": "date-time",
-            "description": "start date"
-          },
-          "endDate": {
-            "type": "string",
-            "format": "date-time",
-            "description": "end date"
-          },
-          "comment": {
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 2000,
-            "description": "trip comment"
-          }
-        }
-      };
-
-      /*eslint-enable*/
-      request({
-        url: 'http://localhost:10010/trips/{tripId PARAM GOES HERE}',
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Cookie': 'DATA GOES HERE'
-        },
-        json: {
-          body: 'DATA GOES HERE'
-        }
-      },
-      function(error, res, body) {
-        if (error) return done(error);
-
-        expect(res.statusCode).to.equal(200);
-
-        expect(validator.validate(body, schema)).to.be.true;
-        done();
-      });
-    });
-
     it('should respond with 400 Bad JSON formatting in the...', function(done) {
       request({
-        url: 'http://localhost:10010/trips/{tripId PARAM GOES HERE}',
+        url: 'http://localhost:10010/trips/58a5dcdbcf7f7905bcb9e4f3',
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Cookie': 'DATA GOES HERE'
+          'Cookie': 'username=unit_user;'
         },
         json: {
           body: 'DATA GOES HERE'
@@ -185,14 +126,13 @@ describe('/trips/{tripId}', function() {
 
         expect(res.statusCode).to.equal(400);
 
-        expect(body).to.equal(null); // non-json response or no schema
         done();
       });
     });
 
     it('should respond with 401 You tried to edit someone...', function(done) {
       request({
-        url: 'http://localhost:10010/trips/{tripId PARAM GOES HERE}',
+        url: 'http://localhost:10010/trips/58a5dcdbcf7f7905bcb9e4f3',
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -207,29 +147,7 @@ describe('/trips/{tripId}', function() {
 
         expect(res.statusCode).to.equal(401);
 
-        expect(body).to.equal(null); // non-json response or no schema
-        done();
-      });
-    });
-
-    it('should respond with 404 The {tripId} was not found', function(done) {
-      request({
-        url: 'http://localhost:10010/trips/{tripId PARAM GOES HERE}',
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Cookie': 'DATA GOES HERE'
-        },
-        json: {
-          body: 'DATA GOES HERE'
-        }
-      },
-      function(error, res, body) {
-        if (error) return done(error);
-
-        expect(res.statusCode).to.equal(404);
-
-        expect(body).to.equal(null); // non-json response or no schema
+        expect(body).to.equal('You must be logged in to do that.'); // non-json response or no schema
         done();
       });
     });
@@ -237,32 +155,32 @@ describe('/trips/{tripId}', function() {
   });
 
   describe('delete', function() {
-    it('should respond with 204 Trip deleted successfully', function(done) {
-      request({
-        url: 'http://localhost:10010/trips/{tripId PARAM GOES HERE}',
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-          'Cookie': 'DATA GOES HERE'
-        }
-      },
-      function(error, res, body) {
-        if (error) return done(error);
-
-        expect(res.statusCode).to.equal(204);
-
-        expect(body).to.equal(null); // non-json response or no schema
-        done();
-      });
-    });
+    // it('should respond with 204 Trip deleted successfully', function(done) {
+    //   request({
+    //     url: 'http://localhost:10010/trips/58a5dcdbcf7f7905bcb9e4f3',
+    //     method: 'DELETE',
+    //     headers: {
+    //       'Content-Type': 'application/json',
+    //       'Cookie': 'username=unit_user;'
+    //     }
+    //   },
+    //   function(error, res, body) {
+    //     if (error) return done(error);
+    //
+    //     expect(res.statusCode).to.equal(204);
+    //
+    //     expect(body).to.equal(null); // non-json response or no schema
+    //     done();
+    //   });
+    // });
 
     it('should respond with 500 There was an error...', function(done) {
       request({
-        url: 'http://localhost:10010/trips/{tripId PARAM GOES HERE}',
+        url: 'http://localhost:10010/trips/58a5dcdbcf7f7905e4f3blah',
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
-          'Cookie': 'DATA GOES HERE'
+          'Cookie': 'username=unit_user;'
         }
       },
       function(error, res, body) {
@@ -270,7 +188,6 @@ describe('/trips/{tripId}', function() {
 
         expect(res.statusCode).to.equal(500);
 
-        expect(body).to.equal(null); // non-json response or no schema
         done();
       });
     });

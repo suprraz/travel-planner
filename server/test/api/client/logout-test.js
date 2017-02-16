@@ -11,10 +11,7 @@ describe('/logout', function() {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
-          'Cookie': 'DATA GOES HERE'
-        },
-        session: {
-          destroy: function(){}
+          'Cookie': 'username=unit_user;'
         }
       },
       function(error, res, body) {
@@ -22,7 +19,7 @@ describe('/logout', function() {
 
         expect(res.statusCode).to.equal(204);
 
-        expect(body).to.equal(null); // non-json response or no schema
+        expect(body).to.equal(''); // non-json response or no schema
         done();
       });
     });
