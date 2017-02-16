@@ -1,5 +1,5 @@
 {
-  "name": "hangman-client",
+  "name": "travel_planner_client",
   "version": "0.1.0",
   "private": true,
   "devDependencies": {

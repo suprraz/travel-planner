@@ -1,4 +1,4 @@
-## Hangman Server
+## Travel Planner Server
 
 
 Installation:

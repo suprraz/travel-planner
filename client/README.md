@@ -1,4 +1,4 @@
-## Hangman Client
+## Travel Planner Client
 
 
 Installation:
