@@ -1,9 +1,9 @@
 swagger: "2.0"
 info:
   version: "0.0.1"
-  title: User Manager
+  title: Travel Planner
   description: >
-    This is a sample API for managing a database of users.  User accounts can be created, deleted, edited, and retrieved.
+    This is an API for managing a database of users and trips.  User and Trip accounts can be created, deleted, edited, and retrieved.
     Users can also log-in, which will create a session cookie. Logging out will delete the cookie.
 host: localhost:10010
 consumes:
@@ -21,11 +21,8 @@ definitions:
         minLength: 1
       password:
         type: string
-        minLength: 1
+        minLength: 4
 
-  # The user schema is defined in the "user.yaml" file.
-  # Swagger-Server will automatically convert the user.yaml
-  # file to JSON format
   user:
     description: a registered user
     required: [username, password, name]
@@ -112,7 +109,9 @@ paths:
     get:
       operationId: getAll
       summary: Returns all users in the database.  
-      description: Only the "admin" user can access this.
+      description: Users with 'admin' or 'manager' roles can access see all users.  Other users can only see themselves.
+      parameters:
+        - $ref: "#/parameters/sessionCookie"
       responses:
         200:
           description: Returns the list of users
@@ -121,12 +120,12 @@ paths:
             items:
               $ref: "#/definitions/user"
         401:
-          description: Hey! You're not the "admin" user!
+          description: You do not have access to this resource
 
     post:
       operationId: save
       summary: Creates a new user
-      description: Only the "admin" user can create users.
+      description: Anyone can create users.
       parameters:
         - name: body
           in: body
@@ -139,10 +138,6 @@ paths:
           description: New user was created successfully
           schema:
             $ref: "#/definitions/user"
-          headers:
-            Location:
-              type: string
-              description: The Server returns the URL of the new user
         400:
           description: Bad JSON formatting in the request
 
@@ -153,7 +148,7 @@ paths:
       operationId: getOne
       summary: Retrieves a user
       description: >
-        users can only retrieve their own account, not other users'. Except for the "admin" user, who can retrieve anyone.
+        Users can only edit their own account, not other users'.  Except for the "admin" and "manager" role users, who can get anyone.
       parameters:
         - $ref: "#/parameters/username"
         - $ref: "#/parameters/sessionCookie"
@@ -163,7 +158,7 @@ paths:
           schema:
             $ref: "#/definitions/user"
         401:
-          description: You tried to retrieve someone else's account, and you're not the "admin" user.
+          description: You do not have access to this resource
         404:
           description: The {username} was not found
 
@@ -171,10 +166,11 @@ paths:
       operationId: updateOne
       summary: Edits a user
       description: >
-        Users can only edit their own account, not other users'.  Except for the "admin" user, who can edit anyone.
+        Users can only edit their own account, not other users'.  Except for the "admin" and "manager" role users, who can edit anyone.
       parameters:
         - $ref: "#/parameters/username"
         - $ref: "#/parameters/userData"
+        - $ref: "#/parameters/sessionCookie"
       responses:
         200:
           description: User data was saved successfully
@@ -183,7 +179,7 @@ paths:
         400:
           description: Bad JSON formatting in the request
         401:
-          description: You tried to edit someone else's account, and you're not the "admin" user.
+          description: You do not have access to this resource
         404:
           description: The {username} was not found
 
@@ -199,7 +195,7 @@ paths:
         204:
           description: User account was deleted
         401:
-          description: You tried to edit someone else's account, and you're not the "admin" user.
+          description: You do not have access to this resource
         404:
           description: The {username} was not found
 
@@ -256,7 +252,7 @@ paths:
             items:
               $ref: "#/definitions/trip"
         401:
-          description: Hey! You're not the "admin" trip!
+          description: You do not have access to this resource
 
     post:
       operationId: saveTrip
@@ -294,7 +290,7 @@ paths:
         200:
           description: Returns the user's data
         401:
-          description: You tried to retrieve someone else's account, and you're not the "admin" user.
+          description: You do not have access to this resource
         404:
           description: The {username} was not found
 
