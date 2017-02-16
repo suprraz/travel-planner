@@ -260,9 +260,9 @@ export default class Dashboard extends Component {
   }
 
   isNextMonth(trip) {
-    var now = new Date();
-    var nextMonth = new Date(now.getFullYear(), now.getMonth()+1, 1);
-    var monthAfterNext = new Date(now.getFullYear(), now.getMonth()+2, 1);
+    let now = new Date();
+    let nextMonth = new Date(now.getFullYear(), now.getMonth()+1, 1);
+    let monthAfterNext = new Date(now.getFullYear(), now.getMonth()+2, 1);
     const tripBeginning = new Date(trip.startDate);
 
     return tripBeginning >= nextMonth && tripBeginning < monthAfterNext;
@@ -313,7 +313,7 @@ export default class Dashboard extends Component {
 
     if(this.state.trips && this.state.trips.length) {
       let rows = []
-      for(var i = 0; i < this.state.trips.length; i++) {
+      for(let i = 0; i < this.state.trips.length; i++) {
         const trip = this.state.trips[i];
         if(this.state.showNextMonthOnly && !this.isNextMonth(trip)) {
           continue;
@@ -381,17 +381,9 @@ export default class Dashboard extends Component {
                     <CardTravelIcon className="material-icon" style={{marginTop: 10, color: 'white'}}/>
                   }
                   iconElementRight={
-                    <IconMenu
-                      iconButtonElement={
-                        <IconButton><MoreHorizIcon /></IconButton>
-                      }
-                    >
-                      <MenuItem
-                        onClick={() => this.userpanel()}>User Panel <VerifiedUserIcon className="material-icon" /></MenuItem>
-
-                      <MenuItem
-                        onClick={() => this.logout()}>Log out <ExitToAppIcon className="material-icon" /></MenuItem>
-
+                    <IconMenu iconButtonElement={<IconButton><MoreHorizIcon /></IconButton>}>
+                      <MenuItem onClick={() => this.userpanel()}>User Panel <VerifiedUserIcon className="material-icon" /></MenuItem>
+                      <MenuItem onClick={() => this.logout()}>Log out <ExitToAppIcon className="material-icon" /></MenuItem>
                     </IconMenu>
                   }
           />

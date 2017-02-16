@@ -64,7 +64,7 @@ export default class UserPanel extends Component {
         if(responseJson.errmsg) {
           this.setState( {alert: responseJson.errmsg});
         } else {
-          var isManager = false;
+          let isManager = false;
           if(responseJson.length === 1 && (responseJson[0].role === 'admin' || responseJson[0].role === 'manager')) {
             isManager = true;
           } else if( responseJson.length > 1) {
@@ -245,7 +245,7 @@ export default class UserPanel extends Component {
     let users = <Card><CardHeader title={this.state.isManager ? 'Users' : 'My Settings'}></CardHeader><CardText>No users</CardText></Card>;
     if(this.state.users && this.state.users.length) {
       let rows = [];
-      for(var i = 0; i < this.state.users.length; i++) {
+      for(let i = 0; i < this.state.users.length; i++) {
         const user = this.state.users[i];
         rows.push(<TableRow key={user._id} selectable={false}>
           <TableRowColumn>
@@ -305,16 +305,9 @@ export default class UserPanel extends Component {
                     <CardTravelIcon className="material-icon" style={{marginTop: 10, color: 'white'}}/>
                   }
                   iconElementRight={
-                    <IconMenu
-                      iconButtonElement={
-                        <IconButton><MoreHorizIcon /></IconButton>
-                      }
-                    >
-                      <MenuItem
-                        onClick={() => this.dashboard()}>Trip Dashboard <ViewAgendaIcon className="material-icon" /></MenuItem>
-                      <MenuItem
-                        onClick={() => this.logout()}>Log out <ExitToAppIcon className="material-icon" /></MenuItem>
-
+                    <IconMenu iconButtonElement={<IconButton><MoreHorizIcon /></IconButton>}>
+                      <MenuItem onClick={() => this.dashboard()}>Trip Dashboard <ViewAgendaIcon className="material-icon" /></MenuItem>
+                      <MenuItem onClick={() => this.logout()}>Log out <ExitToAppIcon className="material-icon" /></MenuItem>
                     </IconMenu>
                   }
           />

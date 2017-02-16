@@ -5,7 +5,6 @@ var utils = require('../helpers/utils')();
 
 module.exports = {getAll, save, getOne, login, logout, updateOne, deleteOne};
 
-//GET /users operationId
 function getAll(req, res, next) {
   var query = {username: req.user.username};
 
