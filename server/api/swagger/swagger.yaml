@@ -25,7 +25,7 @@ definitions:
 
   user:
     description: a registered user
-    required: [username, password, name]
+    required: [username, name]
     properties:
       username:
         type: string
@@ -40,7 +40,7 @@ definitions:
       name:
         type: string
         minLength: 1
-        description: the user's real name
+        description: the users real name
 
     example:
       username: jdoe
@@ -154,7 +154,7 @@ paths:
         - $ref: "#/parameters/sessionCookie"
       responses:
         200:
-          description: Returns the user's data
+          description: Returns the users data
           schema:
             $ref: "#/definitions/user"
         401:
@@ -218,11 +218,6 @@ paths:
           description: Login was successful
           schema:
             $ref: "#/definitions/user"
-          headers:
-            Set-Cookie:
-              type: string
-              description: The session cookie
-              default: connect.sid=123456789012345678901234567890
 
   /logout:
     x-swagger-router-controller: users
@@ -290,7 +285,7 @@ paths:
         - $ref: "#/parameters/tripId"
       responses:
         200:
-          description: Returns the trip's data
+          description: Returns the trips data
         401:
           description: You do not have access to this resource
         404:

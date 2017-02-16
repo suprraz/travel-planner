@@ -29,7 +29,7 @@
   },
   "scripts": {
     "start": "node $NODE_DEBUG_OPTION app.js",
-    "test": "swagger project test",
+    "test": "swagger project test -m",
     "editor": "swagger project edit"
   }
 }
