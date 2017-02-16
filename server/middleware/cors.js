@@ -2,7 +2,7 @@ var cors = require('cors');
 
 module.exports = {
   setHeaders: function(app) {
-    return app.use(cors({credentials: true, origin: 'http://localhost:3000'}));
+    return app.use(cors({credentials: true, origin: true}));
 
     app.all('*', function(req, res, next) {
       res.header('Access-Control-Allow-Origin', '*');
