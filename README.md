@@ -1,6 +1,6 @@
 # Travel Planner
 
-A simple travel planning utility for managing trips and user profiles.  
+A simple travel planning utility for [managing trips](/Screenshots/User\ Management.png) and [user profiles](/Screenshots/Trip\ Management.png).  
 
 ![Travel Planner](/Screenshots/Travel\ Planner.png?raw=true "Travel Planner")
 
