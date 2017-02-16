@@ -2,8 +2,12 @@
 
 A simple travel planning utility for managing trips and user profiles.  
 
+![Travel Planner](/Travel\ Planner.png?raw=true "Travel Planner")
+
+
 ### Overview 
-Single page application that calls a REST API. 
+Single page application that calls a REST API. Uses authentication and authorization on three different user roles:
+`admin`, `manager`, and `user`.  Employes CRF
 
 
 ### Technology Stack

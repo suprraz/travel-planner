@@ -1,5 +1,6 @@
 # IDE files
 .idea
+npm-debug.log.*
 
 # Logs
 logs
