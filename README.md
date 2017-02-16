@@ -2,7 +2,7 @@
 
 A simple travel planning utility for managing trips and user profiles.  
 
-![Travel Planner](/Travel\ Planner.png?raw=true "Travel Planner")
+![Travel Planner](/Screenshots/Travel\ Planner.png?raw=true "Travel Planner")
 
 
 ### Overview 
