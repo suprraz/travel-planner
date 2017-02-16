@@ -187,7 +187,7 @@ paths:
       summary: Deletes a user
       operationId: deleteOne
       description: >
-        Users can only delete their own account, not other users'.  Except for the "admin" user, who can delete anyone.
+        Users can only edit their own account, not other users'.  Except for the "admin" and "manager" role users, who can delete anyone.
       parameters:
         - $ref: "#/parameters/username"
         - $ref: "#/parameters/sessionCookie"
@@ -205,9 +205,7 @@ paths:
     post:
       operationId: login
       summary: Logs in
-      description: |
-        Try logging in with username "jdoe" and password "jdoe".
-        Then try logging in with username "admin" and password "admin".
+      description: Logs in a user
       parameters:
         - name: body
           in: body
@@ -224,16 +222,16 @@ paths:
             Set-Cookie:
               type: string
               description: The session cookie
-              default: demo-session-id=123456789012345678901234567890
-
+              default: connect.sid=123456789012345678901234567890
 
   /logout:
     x-swagger-router-controller: users
     get:
       operationId: logout
-      summary: Logs out the given user
-      description: >
-        Users can only log themselves out, not other users. Except the "admin" user, who can log-out anyone.
+      summary: Logs out the current user
+      parameters:
+        - $ref: "#/parameters/sessionCookie"
+      description: Logs out the user by deleting the session
       responses:
         204:
           description: Logout was successful
@@ -243,7 +241,9 @@ paths:
     get:
       operationId: getAllTrips
       summary: Returns all trips in the database.
-      description: Only the "admin" user can access this.
+      description: Returns all trips the logged in user is the owner of.  'admin' role users receive all trips from all owners
+      parameters:
+        - $ref: "#/parameters/sessionCookie"
       responses:
         200:
           description: Returns the list of trips
@@ -257,8 +257,9 @@ paths:
     post:
       operationId: saveTrip
       summary: Creates a new trip
-      description: Only the "admin" trip can create trips.
+      description: Any logged in user can create a trip
       parameters:
+        - $ref: "#/parameters/sessionCookie"
         - name: body
           in: body
           required: true
@@ -283,22 +284,24 @@ paths:
       operationId: getOneTrip
       summary: Retrieves a trip
       description: >
-        users can only retrieve their own account, not other users'. Except for the "admin" user, who can retrieve anyone.
+        Users can only retrieve their own trip, not other users'. Except for the "admin" user, who can retrieve anyone's trip.
       parameters:
+        - $ref: "#/parameters/sessionCookie"
         - $ref: "#/parameters/tripId"
       responses:
         200:
-          description: Returns the user's data
+          description: Returns the trip's data
         401:
           description: You do not have access to this resource
         404:
-          description: The {username} was not found
+          description: The {tripId} was not found
 
     post:
       operationId: updateTrip
       summary: Edits a trip
-      description: Update an existing trip
+      description: Users can only edit their own trip, not other users'. Except for the "admin" user, who can edit anyone's trip.
       parameters:
+        - $ref: "#/parameters/sessionCookie"
         - $ref: "#/parameters/tripId"
         - name: body
           in: body
@@ -314,7 +317,7 @@ paths:
         400:
           description: Bad JSON formatting in the request
         401:
-          description: You tried to edit someone else's account, and you're not the "admin" user.
+          description: You tried to edit someone else's trip, and you're not the "admin" user.
         404:
           description: The {tripId} was not found
 
@@ -322,9 +325,9 @@ paths:
     delete:
       operationId: deleteTrip
       summary: Deletes a trip
-      description: >
-        users can only retrieve their own account, not other users'. Except for the "admin" user, who can retrieve anyone.
+      description: Users can only delete their own trip, not other users'. Except for the "admin" user, who can delete anyone's trip.
       parameters:
+        - $ref: "#/parameters/sessionCookie"
         - $ref: "#/parameters/tripId"
       responses:
         204:
